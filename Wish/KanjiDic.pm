@@ -3,14 +3,12 @@ package Wish::KanjiDic;
 use strict;
 use warnings;
 
-sub new
-{
+sub new {
 	my $class = shift;
 	bless {}, $class;
 }
 
-sub load
-{
+sub load {
 	my ($self, $file) = @_;
 	open(my $dic, $file);
 	binmode($dic, ":encoding(euc-jp)");
@@ -21,6 +19,24 @@ sub load
 	}
 	print "\n";
 	close $dic;
+}
+
+our %field_map = (
+	P => 'skip',
+);
+
+sub parse_kanji {
+	($_) = @_;
+	my %kanji;
+	my ($k, $jis, @fields) = split;
+	for (@fields) {
+		if (/^{(.*)}$/) {
+			push @{$kanji{english}}, $1;
+		} elsif (/^(.)(.*)$/) {
+			$kanji{$field_map{$1}} = $2 if exists $field_map{$1};
+		}
+	}
+	%kanji;
 }
 
 1;

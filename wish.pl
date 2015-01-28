@@ -1,18 +1,6 @@
-use Encode qw(decode);
+use Wish::KanjiDic;
 
 binmode(STDOUT, ":utf8");
 
-lookup(shift);
-
-sub lookup
-{
-	my ($query) = @_;
-	open(my $dic, "data/kanjidic");
-	binmode($dic, ":encoding(euc-jp)");
-	<$dic>; # skip the first line
-	while (<$dic>) {
-		my @k = split;
-		print "$_" if $k[0] eq $query;
-	}
-	close $dic;
-}
+my $w = Wish::KanjiDic->new();
+$w->load('data/kanjidic');

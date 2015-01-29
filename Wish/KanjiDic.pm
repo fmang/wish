@@ -14,11 +14,15 @@ sub load {
 	binmode($dic, ":encoding(euc-jp)");
 	<$dic>; # skip the first line
 	while (<$dic>) {
-		my @k = split;
-		print $k[0];
+		my %k = parse_kanji($_);
+		$self->{$k{kanji}} = \%k if %k;
 	}
-	print "\n";
 	close $dic;
+}
+
+sub lookup {
+	my ($self, $query) = @_;
+	%{$self->{$query}};
 }
 
 our %field_map = (
@@ -27,8 +31,11 @@ our %field_map = (
 
 sub parse_kanji {
 	($_) = @_;
-	my %kanji;
 	my ($k, $jis, @fields) = split;
+	if (!@fields) {
+		return ();
+	}
+	my %kanji = (kanji => $k);
 	for (@fields) {
 		if (/^{(.*)}$/) {
 			push @{$kanji{english}}, $1;

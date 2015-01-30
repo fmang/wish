@@ -22,7 +22,7 @@ sub load {
 
 sub lookup {
 	my ($self, $query) = @_;
-	%{$self->{$query}};
+	wantarray ? %{$self->{$query}} : $self->{$query};
 }
 
 our %field_map = (
@@ -32,9 +32,7 @@ our %field_map = (
 sub parse_kanji {
 	($_) = @_;
 	my ($k, $jis, @fields) = split;
-	if (!@fields) {
-		return ();
-	}
+	return if !@fields;
 	my %kanji = (kanji => $k);
 	for (@fields) {
 		if (/^{(.*)}$/) {
@@ -43,7 +41,7 @@ sub parse_kanji {
 			$kanji{$field_map{$1}} = $2 if exists $field_map{$1};
 		}
 	}
-	%kanji;
+	wantarray ? %kanji : \%kanji;
 }
 
 1;

@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -21,11 +21,15 @@ binmode($src, ':encoding(euc-jp)');
 $src->print($data);
 $src->close();
 
-my $dic = Wish::Edict2->new(catfile($dir, 'db'), readonly => 0);
+my $dic = Wish::Edict2->new($dir);
+is($dic, undef, 'Nonexistent database');
+
+$dic = Wish::Edict2->new($dir, readonly => 0);
 is($dic->load(catfile($dir, 'derp')), undef, 'Nonexistent source');
 ok($dic->load(catfile($dir, 'source')), 'Loading');
 $dic->close();
 
-$dic = Wish::Edict2->new(catfile($dir, 'db'));
+$dic = Wish::Edict2->new($dir);
 is($dic->load(catfile($dir, 'source')), undef, 'Read-only mode');
 is($dic->lookup('入る'), 2, 'Homograph');
+$dic->close();

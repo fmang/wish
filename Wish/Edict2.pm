@@ -5,22 +5,34 @@ use warnings;
 
 use DB_File;
 use DBM_Filter;
+use File::Spec::Functions;
 
 sub new {
 	my $class = shift;
-	my $basename = shift;
+	my $dir = shift;
 	my $self = bless {@_}, $class;
 	my %hash;
 
+	$self->{dir} = $dir;
 	defined $self->{readonly} or $self->{readonly} = 1;
-	my $mode = $self->{readonly} ? O_RDONLY : O_CREAT | O_RDWR;
 
 	$DB_BTREE->{flags} = R_DUP;
-	$self->{db} = tie %hash, 'DB_File', $basename, $mode, 0666, $DB_BTREE;
-	$self->{db} or return;
-	$self->{db}->Filter_Push('utf8');
-	$self->{hash} = \%hash;
+	$self->opendb('kanji') or return;
+
 	$self;
+}
+
+sub opendb {
+	my ($self, $name) = @_;
+	my $dbname = $name . '_db';
+	my $mode = $self->{readonly} ? O_RDONLY : O_CREAT | O_RDWR;
+	my $path = catfile($self->{dir}, "$name.db");
+	my %hash;
+	$self->{$dbname} = tie %hash, 'DB_File', $path, $mode, 0666, $DB_BTREE;
+	$self->{$dbname} or return;
+	$self->{$dbname}->Filter_Push('utf8');
+	$self->{$name} = \%hash;
+	$self->{$dbname};
 }
 
 sub load {
@@ -31,28 +43,21 @@ sub load {
 	<$dic>; # skip the first line
 	while (<$dic>) {
 		/^([^; (]+)/ or next;
-		$self->{hash}->{$1} = $_;
+		$self->{kanji}->{$1} = $_;
 	}
 	close $dic;
-	$self->{db}->sync();
+	$self->{kanji_db}->sync();
 	1;
 }
 
 sub lookup {
 	my ($self, $key) = @_;
-	$self->{db}->get_dup($key);
+	$self->{kanji_db}->get_dup($key);
 }
 
 sub close {
 	my $self = shift;
-	delete $self->{hash};
-	delete $self->{db};
+	%$self = ();
 }
-
-sub DESTROY {
-	my $self = shift;
-	$self->close();
-}
-
 
 1;

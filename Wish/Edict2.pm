@@ -15,6 +15,7 @@ sub new {
 	defined $self->{readonly} or $self->{readonly} = 1;
 	my $mode = $self->{readonly} ? O_RDONLY : O_CREAT | O_RDWR;
 
+	$DB_BTREE->{flags} = R_DUP;
 	$self->{db} = tie %hash, 'DB_File', $basename, $mode, 0666, $DB_BTREE;
 	$self->{db} or return;
 	$self->{db}->Filter_Push('utf8');
@@ -39,7 +40,7 @@ sub load {
 
 sub lookup {
 	my ($self, $key) = @_;
-	$self->{hash}->{$key};
+	$self->{db}->get_dup($key);
 }
 
 sub close {

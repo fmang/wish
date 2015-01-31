@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 15;
+use Test::More tests => 13;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -47,7 +47,5 @@ TODO: {
 	is(@{$dic->search('ああ')}, 1, 'Kana prefix');
 	is(@{$dic->search('いう')}, 0, 'No kana suffix');
 	# Kanji search
-	is(@{$dic->search('込む')}, 1, 'Inexact kanji prefix');
-	is(@{$dic->search('居')}, 2, 'Inexact kanji suffix');
-	is(@{$dic->search('処理')}, 1, 'Kanji infix');
+	is(@{$dic->search('処理通信')}, 1, 'Disordered kanji search');
 }

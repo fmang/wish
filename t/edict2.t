@@ -1,6 +1,7 @@
 use utf8;
-use Test::More tests => 1;
+use Test::More tests => 4;
 
+use File::Spec::Functions;
 use File::Temp qw(tempdir);
 use Wish::Edict2;
 
@@ -14,14 +15,16 @@ EOF
 
 my $dir = tempdir('wishXXXX', CLEANUP => 1);
 
-open(my $src, "> $dir/source");
-binmode($src, ":encoding(euc-jp)");
+open(my $src, '> ' . catfile($dir, 'source'));
+binmode($src, ':encoding(euc-jp)');
 $src->print($data);
 $src->close();
 
-my $dic = Wish::Edict2->new("$dir/db", readonly => 0);
-$dic->load("$dir/source");
+my $dic = Wish::Edict2->new(catfile($dir, 'db'), readonly => 0);
+is($dic->load(catfile($dir, 'derp')), undef, 'Nonexistent source');
+ok($dic->load(catfile($dir, 'source')), 'Loading');
 $dic->close();
 
-$dic = Wish::Edict2->new("$dir/db");
+$dic = Wish::Edict2->new(catfile($dir, 'db'));
+is($dic->load(catfile($dir, 'source')), undef, 'Read-only mode');
 ok($dic->lookup('居る'), 'Word lookup');

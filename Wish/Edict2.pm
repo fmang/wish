@@ -17,7 +17,7 @@ sub new {
 	defined $self->{readonly} or $self->{readonly} = 1;
 
 	$DB_BTREE->{flags} = R_DUP;
-	$self->opendb('kanji') or return;
+	$self->opendb('word') or return;
 
 	$self;
 }
@@ -43,16 +43,20 @@ sub load {
 	<$dic>; # skip the first line
 	while (<$dic>) {
 		/^([^; (]+)/ or next;
-		$self->{kanji}->{$1} = $_;
+		$self->{word}->{$1} = $_;
 	}
 	close $dic;
-	$self->{kanji_db}->sync();
+	$self->{word_db}->sync();
 	1;
 }
 
 sub lookup {
 	my ($self, $key) = @_;
-	$self->{kanji_db}->get_dup($key);
+	$self->{word_db}->get_dup($key);
+}
+
+sub search {
+	[];
 }
 
 sub close {

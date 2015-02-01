@@ -135,7 +135,7 @@ sub search {
 	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
 		my @results = $self->reading_lookup($q);
 		push(@results, $self->prefix_lookup($q));
-		# the two results set shouldn't intersect
+		# the two result sets shouldn't intersect
 		return @results;
 	} elsif ($q =~ /\p{Han}/) {
 		return $self->kanji_lookup($q);

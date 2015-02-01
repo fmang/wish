@@ -2,6 +2,7 @@ package Wish::Edict2;
 
 use strict;
 use warnings;
+use utf8;
 
 use DB_File;
 use DBM_Filter;
@@ -19,6 +20,7 @@ sub new {
 	$DB_BTREE->{flags} = R_DUP;
 	$self->opendb('entl') or return;
 	$self->opendb('words') or return;
+	$self->opendb('readings') or return;
 
 	$self;
 }
@@ -36,6 +38,10 @@ sub opendb {
 	$self->{$dbname};
 }
 
+sub clean {
+	shift =~ s/\([^()]*\)//gr;
+}
+
 sub load {
 	my ($self, $filename) = @_;
 	return if $self->{readonly};
@@ -45,7 +51,8 @@ sub load {
 	while (my $line = <$dic>) {
 		my %e = parse_entry($line) or next;
 		$self->{entl}->{$e{entl}} = $line;
-		$self->{words}->{$_ =~ s/\([^()]*\)//gr} = $e{entl} for @{$e{words}};
+		$self->{words}->{clean($_)} = $e{entl} for @{$e{words}};
+		$self->{readings}->{to_katakana(clean($_))} = $e{entl} for @{$e{readings}};
 	}
 	close $dic;
 	$self->sync();
@@ -56,11 +63,17 @@ sub sync {
 	my $self = shift;
 	$self->{entl_db}->sync();
 	$self->{words_db}->sync();
+	$self->{readings_db}->sync();
 }
 
 sub lookup {
 	my ($self, $key) = @_;
 	map { $self->{entl}->{$_} } $self->{words_db}->get_dup($key);
+}
+
+sub reading_lookup {
+	my ($self, $key) = @_;
+	map { $self->{entl}->{$_} } $self->{readings_db}->get_dup(to_katakana($key));
 }
 
 sub kanjis {
@@ -71,8 +84,20 @@ sub kanjis {
 	keys %k;
 }
 
+sub to_katakana {
+	shift =~ tr/あ-ゖ/ア-ヶ/r;
+}
+
 sub search {
-	[];
+	my ($self, $q) = @_;
+	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
+		return $self->reading_lookup($q);
+		# should run prefix_lookup too
+	} elsif ($q =~ /\p{Han}/) {
+		return $self->lookup($q);
+		# should run kanji_lookup instead
+	}
+	# English maybe?
 }
 
 sub close {

@@ -65,7 +65,32 @@ sub close {
 }
 
 sub parse_word {
-	my %w;
+	shift =~ m|^([^ ]+)( \[([^\]]+)\])? /(.*?)/(\(P\)/)?EntL([0-9]+)X?/$| or return;
+	my %w = (
+		words => [split(';', $1)],
+		readings => $3 ? [split(';', $3)] : undef,
+		pos => undef,
+		meanings => undef,
+		common => defined $5,
+		entl => $6,
+	);
+	my $meaning;
+	for (split('/', $4)) {
+		# First marker is always a part-of-speech marker
+		if (!defined $w{pos}) {
+			s/^\(([^()]+)\) // or return;
+			$w{pos}->{$_} = undef for split(',', $1);
+		}
+		# Looking for numbers now, with an optional POS marker
+		if (s/^(\(([^()]+)\) )?\([0-9]+\) //) {
+			push(@{$w{meanings}}, $meaning) if $meaning;
+			$meaning = '';
+			if ($2) { $w{pos}->{$_} = undef for split(',', $2); }
+		}
+		$meaning = $meaning ? "$meaning/$_" : $_;
+	}
+	push(@{$w{meanings}}, $meaning) if $meaning;
+	$w{pos} = [keys %{$w{pos}}];
 	wantarray ? %w : \%w;
 }
 

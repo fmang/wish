@@ -81,9 +81,9 @@ sub reading_lookup {
 
 sub prefix_lookup {
 	my ($self, $key) = @_;
+	$key = to_katakana($key);
 	my $prefix = quotemeta($key);
 	$prefix = qr/^$prefix/;
-	$key = to_katakana($key);
 	my ($value, $entry, %results, $st);
 
 	for ($st = $self->{words_db}->seq($key, $value, R_CURSOR);
@@ -92,7 +92,7 @@ sub prefix_lookup {
 
 		next if exists $results{$value};
 		$entry = parse_entry($self->{entl}->{$value});
-		if (any { /$prefix/ } @{$entry->{words}}) {
+		if (any { to_katakana($_) =~ /$prefix/ } @{$entry->{words}}) {
 			$results{$value} = $entry;
 		} else {
 			last;

@@ -52,7 +52,7 @@ is($dic->search('ミドリ'), 1, 'Katakana reading');
 is($dic->search('い'), 0, 'Inexact kana search');
 
 # Kana expressions
-is($dic->search('ああ'), 1, 'Kana prefix');
+is($dic->search('アア'), 1, 'Kana prefix');
 is($dic->search('いう'), 0, 'No kana suffix');
 
 # Kanji search

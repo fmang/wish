@@ -9,20 +9,21 @@ use DBM_Filter;
 use File::Spec::Functions;
 use List::Util qw(any);
 
-sub new {
+sub init {
 	my $class = shift;
 	my $dir = shift;
 	my $self = bless {@_}, $class;
-	my %hash;
 
 	$self->{dir} = $dir;
 	defined $self->{readonly} or $self->{readonly} = 1;
+	$self;
+}
 
-	$DB_BTREE->{flags} = R_DUP;
+sub new {
+	my $self = init(@_);
 	$self->opendb('entl') or return;
 	$self->opendb('words') or return;
 	$self->opendb('readings') or return;
-
 	$self;
 }
 
@@ -32,6 +33,7 @@ sub opendb {
 	my $mode = $self->{readonly} ? O_RDONLY : O_CREAT | O_RDWR;
 	my $path = catfile($self->{dir}, "$name.db");
 	my %hash;
+	$DB_BTREE->{flags} = R_DUP;
 	$self->{$dbname} = tie %hash, 'DB_File', $path, $mode, 0666, $DB_BTREE;
 	$self->{$dbname} or return;
 	$self->{$dbname}->Filter_Push('utf8');

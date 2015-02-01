@@ -3,26 +3,33 @@ package Wish::KanjiDic;
 use strict;
 use warnings;
 
+use Wish::Edict2;
+
 sub new {
-	my $class = shift;
-	bless {}, $class;
+	my $self = Wish::Edict2::init(@_);
+	Wish::Edict2::opendb($self, 'kanjidic') or return;
+	$self;
 }
 
 sub load {
-	my ($self, $file) = @_;
-	open(my $dic, $file);
-	binmode($dic, ":encoding(euc-jp)");
+	my ($self, $filename) = @_;
+	return if $self->{readonly};
+	open(my $dic, $filename) or return;
+	binmode($dic, ':encoding(euc-jp)');
 	<$dic>; # skip the first line
 	while (<$dic>) {
-		my %k = parse_kanji($_);
-		$self->{$k{kanji}} = \%k if %k;
+		/^(\p{Han})/ or next;
+		$self->{kanjidic}->{$1} = $_;
 	}
 	close $dic;
+	$self->{kanjidic_db}->sync();
+	1;
 }
 
 sub lookup {
-	my ($self, $query) = @_;
-	wantarray ? %{$self->{$query}} : $self->{$query};
+	my ($self, $q) = @_;
+	my $k = $self->{kanjidic}->{$q} or return;
+	parse_kanji($k);
 }
 
 our %field_map = (

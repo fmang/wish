@@ -24,6 +24,7 @@ sub new {
 	$self->opendb('entl') or return;
 	$self->opendb('words') or return;
 	$self->opendb('readings') or return;
+	$self->opendb('kindex') or return;
 	$self;
 }
 
@@ -56,6 +57,7 @@ sub load {
 		$self->{entl}->{$e{entl}} = $line;
 		$self->{words}->{to_katakana(clean($_))} = $e{entl} for @{$e{words}};
 		$self->{readings}->{to_katakana(clean($_))} = $e{entl} for @{$e{readings}};
+		$self->{kindex}->{$_} = $e{entl} for kanjis(@{$e{words}});
 	}
 	close $dic;
 	$self->sync();
@@ -67,6 +69,7 @@ sub sync {
 	$self->{entl_db}->sync();
 	$self->{words_db}->sync();
 	$self->{readings_db}->sync();
+	$self->{kindex_db}->sync();
 }
 
 sub lookup {
@@ -104,6 +107,17 @@ sub prefix_lookup {
 	values %results;
 }
 
+sub kanji_lookup {
+	my ($self, $key) = @_;
+	my (%counts, $n);
+	for my $k (kanjis($key)) {
+		$counts{$_}++ for $self->{kindex_db}->get_dup($k);
+		$n++;
+	}
+	my @r = grep { $counts{$_} == $n } keys %counts;
+	map { scalar parse_entry($self->{entl}->{$_}) } @r;
+}
+
 sub kanjis {
 	my %k;
 	for (@_) {
@@ -124,8 +138,7 @@ sub search {
 		# the two results set shouldn't intersect
 		return @results;
 	} elsif ($q =~ /\p{Han}/) {
-		return $self->lookup($q);
-		# should run kanji_lookup instead
+		return $self->kanji_lookup($q);
 	}
 	# English maybe?
 }

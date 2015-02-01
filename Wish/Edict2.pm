@@ -17,7 +17,8 @@ sub new {
 	defined $self->{readonly} or $self->{readonly} = 1;
 
 	$DB_BTREE->{flags} = R_DUP;
-	$self->opendb('word') or return;
+	$self->opendb('entl') or return;
+	$self->opendb('words') or return;
 
 	$self;
 }
@@ -41,18 +42,25 @@ sub load {
 	open(my $dic, $filename) or return;
 	binmode($dic, ':encoding(euc-jp)');
 	<$dic>; # skip the first line
-	while (<$dic>) {
-		/^([^; (]+)/ or next;
-		$self->{word}->{$1} = $_;
+	while (my $line = <$dic>) {
+		my %e = parse_entry($line) or next;
+		$self->{entl}->{$e{entl}} = $line;
+		$self->{words}->{$_ =~ s/\([^()]*\)//gr} = $e{entl} for @{$e{words}};
 	}
 	close $dic;
-	$self->{word_db}->sync();
+	$self->sync();
 	1;
+}
+
+sub sync {
+	my $self = shift;
+	$self->{entl_db}->sync();
+	$self->{words_db}->sync();
 }
 
 sub lookup {
 	my ($self, $key) = @_;
-	$self->{word_db}->get_dup($key);
+	map { $self->{entl}->{$_} } $self->{words_db}->get_dup($key);
 }
 
 sub search {
@@ -64,7 +72,7 @@ sub close {
 	%$self = ();
 }
 
-sub parse_word {
+sub parse_entry {
 	shift =~ m|^([^ ]+)( \[([^\]]+)\])? /(.*?)/(\(P\)/)?EntL([0-9]+)X?/$| or return;
 	my %w = (
 		words => [split(';', $1)],

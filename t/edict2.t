@@ -35,10 +35,10 @@ ok($dic->load(catfile($dir, 'source')), 'Loading');
 $dic = Wish::Edict2->new($dir);
 is($dic->load(catfile($dir, 'source')), undef, 'Read-only mode');
 is($dic->lookup('入る'), 2, 'Homograph');
+is($dic->lookup('蒼い'), 1, 'Alternative kanji lookup');
 
 TODO: {
 	local $TODO = 'Wish::Edict2 not finished';
-	is($dic->lookup('蒼い'), 1, 'Alternative kanji lookup');
 	is(@{$dic->search('蒼い')}, 1, 'Alternative kanji search');
 	# Reading lookup
 	is(@{$dic->search('みどり')}, 1, 'Exact reading');

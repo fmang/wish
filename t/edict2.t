@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 14;
+use Test::More tests => 15;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -36,6 +36,8 @@ $dic = Wish::Edict2->new($dir);
 is($dic->load(catfile($dir, 'source')), undef, 'Read-only mode');
 is($dic->lookup('入る'), 2, 'Homograph');
 is($dic->lookup('蒼い'), 1, 'Alternative kanji lookup');
+
+is_deeply([sort(Wish::Edict2::kanjis('引き離す', '赤い'))], [sort('引', '離', '赤')], 'Kanji filter');
 
 TODO: {
 	local $TODO = 'Wish::Edict2 not finished';

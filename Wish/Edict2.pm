@@ -63,6 +63,14 @@ sub lookup {
 	map { $self->{entl}->{$_} } $self->{words_db}->get_dup($key);
 }
 
+sub kanjis {
+	my %k;
+	for (@_) {
+		$k{$_} = undef for /\p{Han}/g;
+	}
+	keys %k;
+}
+
 sub search {
 	[];
 }

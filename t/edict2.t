@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -15,6 +15,7 @@ my $data = <<EOF;
 緑(P);翠 [みどり] /(n) (1) green/(2) greenery (esp. fresh verdure)/(P)/EntL1555300X/
 メッセージ通信処理環境 [メッセージつうしんしょりかんきょう] /(n) {comp} message handling environment/EntL2333870X/
 ああいう(P);ああゆう /(exp,adj-pn) that sort of/like that/(P)/EntL2085090X/
+噯;噯気;噫気;噯木(iK) [おくび(噯,噯気);あいき(噯気,噫気,噯木)] /(n) (uk) belch/eructation/burp/EntL2007450X/
 EOF
 
 my $dir = tempdir('wishXXXX', CLEANUP => 1);
@@ -41,6 +42,7 @@ TODO: {
 	is(@{$dic->search('蒼い')}, 1, 'Alternative kanji search');
 	# Reading lookup
 	is(@{$dic->search('みどり')}, 1, 'Exact reading');
+	is(@{$dic->search('あいき')}, 1, 'Complicated reading');
 	is(@{$dic->search('ミドリ')}, 1, 'Katakana reading');
 	is(@{$dic->search('い')}, 0, 'Inexact kana search');
 	# Kana expressions

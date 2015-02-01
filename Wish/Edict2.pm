@@ -64,4 +64,9 @@ sub close {
 	%$self = ();
 }
 
+sub parse_word {
+	my %w;
+	wantarray ? %w : \%w;
+}
+
 1;

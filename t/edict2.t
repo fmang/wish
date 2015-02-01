@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 17;
+use Test::More tests => 18;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -41,17 +41,19 @@ is($dic->lookup('蒼い'), 1, 'Alternative kanji lookup');
 is(Wish::Edict2::to_katakana('よう'), 'ヨウ', 'Katakana conversion');
 is_deeply([sort(Wish::Edict2::kanjis('引き離す', '赤い'))], [sort('引', '離', '赤')], 'Kanji filter');
 
-TODO: {
-	local $TODO = 'Wish::Edict2 not finished';
-	is($dic->search('蒼い'), 1, 'Alternative kanji search');
-	# Reading lookup
-	is($dic->search('みどり'), 1, 'Exact reading');
-	is($dic->search('あいき'), 1, 'Complicated reading');
-	is($dic->search('ミドリ'), 1, 'Katakana reading');
-	is($dic->search('い'), 0, 'Inexact kana search');
-	# Kana expressions
-	is($dic->search('ああ'), 1, 'Kana prefix');
-	is($dic->search('いう'), 0, 'No kana suffix');
-	# Kanji search
-	is($dic->search('処理通信'), 1, 'Disordered kanji search');
-}
+my @r = $dic->search('蒼い');
+is(@r, 1, 'Alternative kanji search');
+ok($r[0]->{common}, 'Good search results');
+
+# Reading lookup
+is($dic->search('みどり'), 1, 'Exact reading');
+is($dic->search('あいき'), 1, 'Complicated reading');
+is($dic->search('ミドリ'), 1, 'Katakana reading');
+is($dic->search('い'), 0, 'Inexact kana search');
+
+# Kana expressions
+is($dic->search('ああ'), 1, 'Kana prefix');
+is($dic->search('いう'), 0, 'No kana suffix');
+
+# Kanji search
+is($dic->search('処理通信'), 1, 'Disordered kanji search');

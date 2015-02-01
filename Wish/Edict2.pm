@@ -7,6 +7,7 @@ use utf8;
 use DB_File;
 use DBM_Filter;
 use File::Spec::Functions;
+use List::Util qw(any);
 
 sub new {
 	my $class = shift;
@@ -51,7 +52,7 @@ sub load {
 	while (my $line = <$dic>) {
 		my %e = parse_entry($line) or next;
 		$self->{entl}->{$e{entl}} = $line;
-		$self->{words}->{clean($_)} = $e{entl} for @{$e{words}};
+		$self->{words}->{to_katakana(clean($_))} = $e{entl} for @{$e{words}};
 		$self->{readings}->{to_katakana(clean($_))} = $e{entl} for @{$e{readings}};
 	}
 	close $dic;
@@ -68,12 +69,37 @@ sub sync {
 
 sub lookup {
 	my ($self, $key) = @_;
-	map { $self->{entl}->{$_} } $self->{words_db}->get_dup($key);
+	map { scalar parse_entry($self->{entl}->{$_}) }
+	    $self->{words_db}->get_dup(to_katakana($key));
 }
 
 sub reading_lookup {
 	my ($self, $key) = @_;
-	map { $self->{entl}->{$_} } $self->{readings_db}->get_dup(to_katakana($key));
+	map { scalar parse_entry($self->{entl}->{$_}) }
+	    $self->{readings_db}->get_dup(to_katakana($key));
+}
+
+sub prefix_lookup {
+	my ($self, $key) = @_;
+	my $prefix = quotemeta($key);
+	$prefix = qr/^$prefix/;
+	$key = to_katakana($key);
+	my ($value, $entry, %results, $st);
+
+	for ($st = $self->{words_db}->seq($key, $value, R_CURSOR);
+	     $st == 0;
+	     $st = $self->{words_db}->seq($key, $value, R_NEXT)) {
+
+		next if exists $results{$value};
+		$entry = parse_entry($self->{entl}->{$value});
+		if (any { /$prefix/ } @{$entry->{words}}) {
+			$results{$value} = $entry;
+		} else {
+			last;
+		}
+
+	}
+	values %results;
 }
 
 sub kanjis {
@@ -91,8 +117,10 @@ sub to_katakana {
 sub search {
 	my ($self, $q) = @_;
 	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
-		return $self->reading_lookup($q);
-		# should run prefix_lookup too
+		my @results = $self->reading_lookup($q);
+		push(@results, $self->prefix_lookup($q));
+		# the two results set shouldn't intersect
+		return @results;
 	} elsif ($q =~ /\p{Han}/) {
 		return $self->lookup($q);
 		# should run kanji_lookup instead

@@ -41,11 +41,17 @@ sub parse_kanji {
 	my ($k, $jis, @fields) = split;
 	return if !@fields;
 	my %kanji = (kanji => $k);
+	my $nanori;
 	for (@fields) {
-		if (/^{(.*)}$/) {
-			push @{$kanji{english}}, $1;
-		} elsif (/^(.)(.*)$/) {
+		if (/^([A-Z])(.*)$/) {
 			$kanji{$field_map{$1}} = $2 if exists $field_map{$1};
+			$1 eq 'T' and $nanori = 1;
+		} elsif (/\p{Kana}/) {
+			push @{$kanji{on}}, $_;
+		} elsif (/\p{Hira}/) {
+			push @{$kanji{$nanori ? 'nanori' : 'kun'}}, $_;
+		} elsif (/^{(.*)}$/) {
+			push @{$kanji{english}}, $1;
 		}
 	}
 	wantarray ? %kanji : \%kanji;

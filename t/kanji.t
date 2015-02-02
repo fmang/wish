@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 4;
+use Test::More tests => 7;
 
 use Wish::KanjiDic;
 
@@ -11,6 +11,9 @@ my $ref = Wish::KanjiDic::parse_kanji($sample);
 my %bad = Wish::KanjiDic::parse_kanji('sorry');
 
 is($kanji{skip}, '3-3-7', 'SKIP code');
+is_deeply($kanji{on}, ['ホウ'], 'On readings');
+is_deeply($kanji{kun}, [qw/あ.う むか.える/], 'Kun readings');
+is_deeply($kanji{nanori}, [qw/あい おう/], 'Name readings');
 is_deeply($kanji{english}, [qw(meeting tryst date rendezvous)], 'English meanings');
 is_deeply(\%kanji, $ref, 'Return by reference');
 is(%bad, 0, 'Bad input');

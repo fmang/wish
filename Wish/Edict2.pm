@@ -171,8 +171,6 @@ sub parse_entry {
 	my %w = (
 		words => [split(';', $1)],
 		readings => $3 ? [split(';', $3)] : undef,
-		pos => undef,
-		meanings => undef,
 		common => defined $5,
 		entl => $6,
 	);

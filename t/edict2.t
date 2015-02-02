@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 18;
+use Test::More tests => 19;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -55,5 +55,7 @@ is($dic->search('い'), 0, 'Inexact kana search');
 is($dic->search('アア'), 1, 'Kana prefix');
 is($dic->search('いう'), 0, 'No kana suffix');
 
-# Kanji search
 is($dic->search('処理通信'), 1, 'Disordered kanji search');
+
+my @h = $dic->homonyms('入る');
+ok(@h == 1 && $h[0]->{words}->[0] eq '居る', 'Homonyms');

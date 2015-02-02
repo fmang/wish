@@ -72,16 +72,19 @@ sub sync {
 	$self->{kindex_db}->sync();
 }
 
+sub entl_lookup {
+	my $self = shift;
+	map { scalar parse_entry($self->{entl}->{$_}) } @_;
+}
+
 sub lookup {
 	my ($self, $key) = @_;
-	map { scalar parse_entry($self->{entl}->{$_}) }
-	    $self->{words_db}->get_dup(to_katakana($key));
+	$self->entl_lookup($self->{words_db}->get_dup(to_katakana($key)));
 }
 
 sub reading_lookup {
 	my ($self, $key) = @_;
-	map { scalar parse_entry($self->{entl}->{$_}) }
-	    $self->{readings_db}->get_dup(to_katakana($key));
+	$self->entl_lookup($self->{readings_db}->get_dup(to_katakana($key)));
 }
 
 sub prefix_lookup {
@@ -115,7 +118,7 @@ sub kanji_lookup {
 		$n++;
 	}
 	my @r = grep { $counts{$_} == $n } keys %counts;
-	map { scalar parse_entry($self->{entl}->{$_}) } @r;
+	$self->entl_lookup(@r);
 }
 
 sub kanjis {
@@ -141,6 +144,20 @@ sub search {
 		return $self->kanji_lookup($q);
 	}
 	# English maybe?
+}
+
+sub homonyms {
+	my ($self, $q) = @_;
+	my @ws = $self->lookup($q);
+	my (%rs, %entl, %res);
+	for my $e (@ws) {
+		$rs{$_} = undef for @{$e->{readings}};
+	}
+	for my $r (keys %rs) {
+		$entl{$_} = undef for $self->{readings_db}->get_dup(to_katakana($r));
+	}
+	delete $entl{$_->{entl}} for @ws;
+	$self->entl_lookup(keys %entl);
 }
 
 sub close {

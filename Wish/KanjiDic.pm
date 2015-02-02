@@ -37,7 +37,7 @@ sub lookup {
 
 sub skip_lookup {
 	my ($self, $q) = @_;
-	map { $self->lookup($_) } $self->{skip_db}->get_dup($q);
+	$self->{skip_db}->get_dup($q);
 }
 
 our %field_map = (

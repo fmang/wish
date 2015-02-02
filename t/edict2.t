@@ -57,5 +57,5 @@ is($dic->search('いう'), 0, 'No kana suffix');
 
 is($dic->search('処理通信'), 1, 'Disordered kanji search');
 
-my @h = $dic->homonyms('入る');
-ok(@h == 1 && $h[0]->{words}->[0] eq '居る', 'Homonyms');
+my @h = $dic->homophones('入る');
+ok(@h == 1 && $h[0]->{words}->[0] eq '居る', 'Homophones');

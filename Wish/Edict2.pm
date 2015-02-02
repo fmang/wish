@@ -146,7 +146,7 @@ sub search {
 	# English maybe?
 }
 
-sub homonyms {
+sub homophones {
 	my ($self, $q) = @_;
 	my @ws = $self->lookup($q);
 	my (%rs, %entl, %res);

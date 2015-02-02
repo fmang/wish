@@ -8,6 +8,7 @@ use Wish::Edict2;
 sub new {
 	my $self = Wish::Edict2::init(@_);
 	Wish::Edict2::opendb($self, 'kanjidic') or return;
+	Wish::Edict2::opendb($self, 'skip') or return;
 	$self;
 }
 
@@ -18,11 +19,13 @@ sub load {
 	binmode($dic, ':encoding(euc-jp)');
 	<$dic>; # skip the first line
 	while (<$dic>) {
-		/^(\p{Han})/ or next;
-		$self->{kanjidic}->{$1} = $_;
+		my %k = parse_kanji($_) or next;
+		$self->{kanjidic}->{$k{kanji}} = $_;
+		$k{skip} and $self->{skip}->{$k{skip}} = $k{kanji};
 	}
 	close $dic;
 	$self->{kanjidic_db}->sync();
+	$self->{skip_db}->sync();
 	1;
 }
 
@@ -30,6 +33,11 @@ sub lookup {
 	my ($self, $q) = @_;
 	my $k = $self->{kanjidic}->{$q} or return;
 	parse_kanji($k);
+}
+
+sub skip_lookup {
+	my ($self, $q) = @_;
+	map { scalar $self->lookup($_) } $self->{skip_db}->get_dup($q);
 }
 
 our %field_map = (

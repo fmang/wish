@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -32,3 +32,6 @@ $dic = Wish::KanjiDic->new($dir);
 $ai = $dic->lookup('愛');
 is($ai && $ai->{skip}, '2-4-9', 'Persistence');
 is($dic->load(catfile($dir, 'source')), undef, 'Read-only mode');
+
+is($dic->skip_lookup('2-4-9'), 1, 'SKIP lookup');
+is($dic->skip_lookup('1-1-1'), 0, 'Negative SKIP lookup');

@@ -151,10 +151,11 @@ sub homophones {
 	my @ws = $self->lookup($q);
 	my (%rs, %entl, %res);
 	for my $e (@ws) {
-		$rs{$_} = undef for @{$e->{readings}};
+		$rs{to_katakana($_)} = undef for @{$e->{readings}};
 	}
 	for my $r (keys %rs) {
-		$entl{$_} = undef for $self->{readings_db}->get_dup(to_katakana($r));
+		$entl{$_} = undef for $self->{readings_db}->get_dup($r);
+		$entl{$_} = undef for $self->{words_db}->get_dup($r);
 	}
 	delete $entl{$_->{entl}} for @ws;
 	$self->entl_lookup(keys %entl);

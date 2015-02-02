@@ -53,11 +53,11 @@ sub load {
 	binmode($dic, ':encoding(euc-jp)');
 	<$dic>; # skip the first line
 	while (my $line = <$dic>) {
-		my %e = parse_entry($line) or next;
-		$self->{entl}->{$e{entl}} = $line;
-		$self->{words}->{to_katakana(clean($_))} = $e{entl} for @{$e{words}};
-		$self->{readings}->{to_katakana(clean($_))} = $e{entl} for @{$e{readings}};
-		$self->{kindex}->{$_} = $e{entl} for kanjis(@{$e{words}});
+		my $e = parse_entry($line) or next;
+		$self->{entl}->{$e->{entl}} = $line;
+		$self->{words}->{to_katakana(clean($_))} = $e->{entl} for @{$e->{words}};
+		$self->{readings}->{to_katakana(clean($_))} = $e->{entl} for @{$e->{readings}};
+		$self->{kindex}->{$_} = $e->{entl} for kanjis(@{$e->{words}});
 	}
 	close $dic;
 	$self->sync();
@@ -74,7 +74,7 @@ sub sync {
 
 sub entl_lookup {
 	my $self = shift;
-	map { scalar parse_entry($self->{entl}->{$_}) } @_;
+	map { parse_entry($self->{entl}->{$_}) } @_;
 }
 
 sub lookup {
@@ -191,7 +191,7 @@ sub parse_entry {
 	}
 	push(@{$w{meanings}}, $meaning) if $meaning;
 	$w{pos} = [keys %{$w{pos}}];
-	wantarray ? %w : \%w;
+	\%w;
 }
 
 1;

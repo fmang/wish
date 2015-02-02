@@ -19,9 +19,9 @@ sub load {
 	binmode($dic, ':encoding(euc-jp)');
 	<$dic>; # skip the first line
 	while (<$dic>) {
-		my %k = parse_kanji($_) or next;
-		$self->{kanjidic}->{$k{kanji}} = $_;
-		$k{skip} and $self->{skip}->{$k{skip}} = $k{kanji};
+		my $k = parse_kanji($_) or next;
+		$self->{kanjidic}->{$k->{kanji}} = $_;
+		$k->{skip} and $self->{skip}->{$k->{skip}} = $k->{kanji};
 	}
 	close $dic;
 	$self->{kanjidic_db}->sync();
@@ -37,7 +37,7 @@ sub lookup {
 
 sub skip_lookup {
 	my ($self, $q) = @_;
-	map { scalar $self->lookup($_) } $self->{skip_db}->get_dup($q);
+	map { $self->lookup($_) } $self->{skip_db}->get_dup($q);
 }
 
 our %field_map = (
@@ -62,7 +62,7 @@ sub parse_kanji {
 			push @{$kanji{english}}, $1;
 		}
 	}
-	wantarray ? %kanji : \%kanji;
+	\%kanji;
 }
 
 1;

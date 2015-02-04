@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Path qw(make_path);
+use Getopt::Long qw(:config no_auto_abbrev);
+use Wish::Edict2;
+use Wish::KanjiDic;
+
+my $dbdir = 'db';
+my $load_mode;
+my $kanjidic_file;
+my $edict_file;
+
+GetOptions(
+	'database|db|d=s' => \$dbdir,
+	'load|l' => \$load_mode,
+	'kanjidic=s' => \$kanjidic_file,
+	'edict=s' => \$edict_file,
+);
+
+if (!$load_mode and $kanjidic_file || $edict_file) {
+	die("Cannot load a dictionary file without --load.\n");
+}
+
+if ($load_mode && ! -d $dbdir) {
+	print(STDERR "Creating the database directory $dbdir...\n");
+	make_path($dbdir);
+}
+
+my $kanjidic = Wish::KanjiDic->new($dbdir, readonly => !$load_mode);
+my $edict = Wish::Edict2->new($dbdir, readonly => !$load_mode);
+
+$kanjidic && $edict or die("Couldn't open the dictionary database: $!.\n");
+
+if ($kanjidic_file) {
+	print(STDERR "Loading KANJIDIC from $kanjidic_file...\n");
+	my $s = $kanjidic->load($kanjidic_file);
+	$s or warn("Couldn't load KANJIDIC from $kanjidic_file: $!.\n");
+	$s and print(STDERR "Successfully loaded KANJIDIC from $kanjidic_file.\n");
+}
+
+if ($edict_file) {
+	print(STDERR "Loading EDICT2 from $edict_file...\n");
+	my $s = $edict->load($edict_file);
+	$s or warn("Couldn't load EDICT2 from $edict_file: $!.\n");
+	$s and print(STDERR "Successfully loaded EDICT2 from $edict_file.\n");
+}
+
+for my $q (@ARGV) {
+	print("Supposed to lookup $q.\n");
+}

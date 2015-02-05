@@ -1,12 +1,16 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -CA
 
 use strict;
 use warnings;
+use utf8;
 
 use File::Path qw(make_path);
 use Getopt::Long qw(:config no_auto_abbrev);
+use Term::ANSIColor;
 use Wish::Edict2;
 use Wish::KanjiDic;
+
+binmode(STDOUT, ":utf8");
 
 my $dbdir = 'db';
 my $load_mode;
@@ -52,6 +56,29 @@ for my $file (@edict_files) {
 	$s and print(STDERR "Successfully loaded EDICT2 from $file.\n");
 }
 
+sub print_kanji {
+	my $k = shift;
+	print(colored($k->{kanji}, 'blue'));
+	my $prefix = ' ';
+	my %elems = (
+		'on' => '音',
+		'kun' => '訓',
+		'nanori' => '名',
+		'english' => '英',
+	);
+	for my $f (qw/on kun nanori english/) {
+		next unless defined $k->{$f};
+		print($prefix, colored($elems{$f}, 'green'));
+		$prefix = ' ';
+		for (@{$k->{$f}}) {
+			$f eq 'kun' and s/\.(.*)$/colored("·$1", 'white')/e;
+			print($prefix, "$_\n");
+			$prefix = '      ';
+		}
+		$prefix = '   ';
+	}
+}
+
 for my $q (@ARGV) {
-	print("Supposed to lookup $q.\n");
+	print_kanji($kanjidic->lookup($_)) for sort(Wish::Edict2::kanjis($q));
 }

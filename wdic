@@ -10,18 +10,22 @@ use Wish::KanjiDic;
 
 my $dbdir = 'db';
 my $load_mode;
-my $kanjidic_file;
-my $edict_file;
+my @kanjidic_files;
+my @edict_files;
 
 GetOptions(
 	'database|db|d=s' => \$dbdir,
 	'load|l' => \$load_mode,
-	'kanjidic=s' => \$kanjidic_file,
-	'edict=s' => \$edict_file,
+	'kanjidic=s' => \@kanjidic_files,
+	'edict=s' => \@edict_files,
 );
 
-if (!$load_mode and $kanjidic_file || $edict_file) {
+if (!$load_mode and @kanjidic_files || @edict_files) {
 	die("Cannot load a dictionary file without --load.\n");
+}
+
+if ($load_mode and @ARGV) {
+	die("Please don't load and search at the same time.\n");
 }
 
 if ($load_mode && ! -d $dbdir) {
@@ -34,18 +38,18 @@ my $edict = Wish::Edict2->new($dbdir, readonly => !$load_mode);
 
 $kanjidic && $edict or die("Couldn't open the dictionary database: $!.\n");
 
-if ($kanjidic_file) {
-	print(STDERR "Loading KANJIDIC from $kanjidic_file...\n");
-	my $s = $kanjidic->load($kanjidic_file);
-	$s or warn("Couldn't load KANJIDIC from $kanjidic_file: $!.\n");
-	$s and print(STDERR "Successfully loaded KANJIDIC from $kanjidic_file.\n");
+for my $file (@kanjidic_files) {
+	print(STDERR "Loading KANJIDIC from $file...\n");
+	my $s = $kanjidic->load($file);
+	$s or warn("Couldn't load KANJIDIC from $file: $!.\n");
+	$s and print(STDERR "Successfully loaded KANJIDIC from $file.\n");
 }
 
-if ($edict_file) {
-	print(STDERR "Loading EDICT2 from $edict_file...\n");
-	my $s = $edict->load($edict_file);
-	$s or warn("Couldn't load EDICT2 from $edict_file: $!.\n");
-	$s and print(STDERR "Successfully loaded EDICT2 from $edict_file.\n");
+for my $file (@edict_files) {
+	print(STDERR "Loading EDICT2 from $file...\n");
+	my $s = $edict->load($file);
+	$s or warn("Couldn't load EDICT2 from $file: $!.\n");
+	$s and print(STDERR "Successfully loaded EDICT2 from $file.\n");
 }
 
 for my $q (@ARGV) {

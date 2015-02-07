@@ -87,8 +87,13 @@ for my $q (@ARGV) {
 		print(@r ? join('', @r) : colored('Nothing found.', 'white'), "\n");
 		next;
 	}
-	print(colored("ー $q\n\n", 'yellow'));
-	print_kanji($kanjidic->lookup($_)) for sort(Wish::Edict2::kanjis($q));
+	print(colored("ー $q\n", 'yellow'));
+	for (sort(Wish::Edict2::kanjis($q))) {
+		print("\n");
+		print_kanji($kanjidic->lookup($_));
+	}
+	print("\n");
+	print(colored("Nothing found.\n", 'white'));
 }
 
 print("\n");

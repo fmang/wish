@@ -7,6 +7,7 @@ use utf8;
 use File::Path qw(make_path);
 use Getopt::Long qw(:config no_auto_abbrev);
 use Term::ANSIColor;
+use Text::Wrap;
 use Wish::Edict2;
 use Wish::KanjiDic;
 
@@ -32,6 +33,11 @@ if ($load_mode and @ARGV) {
 	die("Please don't load and search at the same time.\n");
 }
 
+if (!$load_mode and !@ARGV) {
+	print("Nothing to do.\n");
+	exit(0);
+}
+
 if ($load_mode && ! -d $dbdir) {
 	print(STDERR "Creating the database directory $dbdir...\n");
 	make_path($dbdir);
@@ -54,6 +60,11 @@ for my $file (@edict_files) {
 	my $s = $edict->load($file);
 	$s or warn("Couldn't load EDICT2 from $file: $!.\n");
 	$s and print(STDERR "Successfully loaded EDICT2 from $file.\n");
+}
+
+if ($load_mode) {
+	# work is done
+	exit(0);
 }
 
 sub c {
@@ -92,23 +103,42 @@ sub print_cut {
 	}
 }
 
-for my $q (@ARGV) {
+sub print_entry {
+	my $e = shift;
+	my $w = $e->{words} || $e->{readings};
+	my $r = $e->{words} ? $e->{readings} : undef;
+	$w or return;
+	print(join(' / ', map { c($_, 'blue') } @$w), "\n");
+	$r and print(c('   読 ', 'green'), join('  ', @$r), "\n");
+	$e->{meanings} and print(
+		c('   英 ', 'green'),
+		wrap('', '      ', join(' — ', @{$e->{meanings}}), "\n")
+	);
 	print("\n");
+}
+
+print("\n");
+
+for my $q (@ARGV) {
 	if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
 		print(c("ー SKIP $q\n\n", 'yellow'));
 		my @r = $kanjidic->skip_lookup($q);
 		print_cut(20, @r);
 		@r or print(c("Nothing found.", 'white'));
-		print("\n");
+		print("\n\n");
 		next;
 	}
-	print(c("ー $q\n", 'yellow'));
+	print(c("ー $q\n\n", 'yellow'));
+	my $found = 0;
 	for (sort(Wish::Edict2::kanjis($q))) {
-		print("\n");
-		print_kanji($kanjidic->lookup($_));
+		if (my $k = $kanjidic->lookup($_)) {
+			print_kanji($k);
+			print("\n");
+			$found = 1;
+		}
 	}
-	print("\n");
-	print(c("Nothing found.\n", 'white'));
+	my @words = $edict->search($q);
+	$found ||= @words;
+	print_entry($_) for @words;
+	$found or print(c("Nothing found.\n\n", 'white'));
 }
-
-print("\n");

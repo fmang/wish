@@ -65,12 +65,7 @@ sub print_kanji {
 	my $k = shift;
 	print(c($k->{kanji}, 'blue'));
 	my $prefix = ' ';
-	my %elems = (
-		'on' => '音',
-		'kun' => '訓',
-		'nanori' => '名',
-		'english' => '英',
-	);
+	my %elems = (on => '音', kun => '訓', nanori => '名', english => '英');
 	for my $f (qw/on kun nanori english/) {
 		next unless defined $k->{$f};
 		print($prefix, c($elems{$f}, 'green'));

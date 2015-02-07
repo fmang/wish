@@ -16,12 +16,14 @@ my $dbdir = 'db';
 my $load_mode;
 my @kanjidic_files;
 my @edict_files;
+my $use_colors = -t STDOUT;
 
 GetOptions(
 	'database|db|d=s' => \$dbdir,
 	'load|l' => \$load_mode,
 	'kanjidic=s' => \@kanjidic_files,
 	'edict=s' => \@edict_files,
+	'color!' => \$use_colors,
 );
 
 if (!$load_mode and @kanjidic_files || @edict_files) {
@@ -71,7 +73,7 @@ if ($load_mode) {
 
 sub c {
 	my ($t, $c) = @_;
-	-t STDOUT ? colored($t, $c) : $t;
+	$use_colors ? colored($t, $c) : $t;
 }
 
 sub print_kanji {

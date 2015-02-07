@@ -56,9 +56,14 @@ for my $file (@edict_files) {
 	$s and print(STDERR "Successfully loaded EDICT2 from $file.\n");
 }
 
+sub c {
+	my ($t, $c) = @_;
+	-t STDOUT ? colored($t, $c) : $t;
+}
+
 sub print_kanji {
 	my $k = shift;
-	print(colored($k->{kanji}, 'blue'));
+	print(c($k->{kanji}, 'blue'));
 	my $prefix = ' ';
 	my %elems = (
 		'on' => '音',
@@ -68,10 +73,10 @@ sub print_kanji {
 	);
 	for my $f (qw/on kun nanori english/) {
 		next unless defined $k->{$f};
-		print($prefix, colored($elems{$f}, 'green'));
+		print($prefix, c($elems{$f}, 'green'));
 		$prefix = ' ';
 		for (@{$k->{$f}}) {
-			$f eq 'kun' and s/\.(.*)$/colored("·$1", 'white')/e;
+			$f eq 'kun' and s/\.(.*)$/c("·$1", 'white')/e;
 			print($prefix, "$_\n");
 			$prefix = '      ';
 		}
@@ -95,20 +100,20 @@ sub print_cut {
 for my $q (@ARGV) {
 	print("\n");
 	if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
-		print(colored("ー SKIP $q\n\n", 'yellow'));
+		print(c("ー SKIP $q\n\n", 'yellow'));
 		my @r = $kanjidic->skip_lookup($q);
 		print_cut(20, @r);
-		@r or print(colored("Nothing found.", 'white'));
+		@r or print(c("Nothing found.", 'white'));
 		print("\n");
 		next;
 	}
-	print(colored("ー $q\n", 'yellow'));
+	print(c("ー $q\n", 'yellow'));
 	for (sort(Wish::Edict2::kanjis($q))) {
 		print("\n");
 		print_kanji($kanjidic->lookup($_));
 	}
 	print("\n");
-	print(colored("Nothing found.\n", 'white'));
+	print(c("Nothing found.\n", 'white'));
 }
 
 print("\n");

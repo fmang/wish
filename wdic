@@ -17,6 +17,7 @@ my $load_mode;
 my @kanjidic_files;
 my @edict_files;
 my $use_colors = -t STDOUT;
+my $show_homophones = 1;
 
 GetOptions(
 	'database|db|d=s' => \$dbdir,
@@ -24,6 +25,7 @@ GetOptions(
 	'kanjidic=s' => \@kanjidic_files,
 	'edict=s' => \@edict_files,
 	'color!' => \$use_colors,
+	'homophones!' => \$show_homophones,
 );
 
 if (!$load_mode and @kanjidic_files || @edict_files) {
@@ -142,6 +144,7 @@ for my $q (@ARGV) {
 		}
 	}
 	my @words = $edict->search($q);
+	$show_homophones and $q =~ /\p{Han}/ and push(@words, $edict->homophones($q));
 	$found ||= @words;
 	print_entry($_) for @words;
 	$found or print(c("Nothing found.\n\n", 'white'));

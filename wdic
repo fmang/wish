@@ -80,9 +80,15 @@ sub print_kanji {
 }
 
 for my $q (@ARGV) {
+	print("\n");
 	if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
-		print(join('', $kanjidic->skip_lookup($q)), "\n");
+		print(colored("ー SKIP $q\n\n", 'yellow'));
+		my @r = $kanjidic->skip_lookup($q);
+		print(@r ? join('', @r) : colored('Nothing found.', 'white'), "\n");
 		next;
 	}
+	print(colored("ー $q\n\n", 'yellow'));
 	print_kanji($kanjidic->lookup($_)) for sort(Wish::Edict2::kanjis($q));
 }
+
+print("\n");

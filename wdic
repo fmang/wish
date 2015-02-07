@@ -79,12 +79,27 @@ sub print_kanji {
 	}
 }
 
+sub print_cut {
+	my $n = shift;
+	my $count = 0;
+	for (@_) {
+		print($_);
+		$count++;
+		if ($count == $n) {
+			print("\n");
+			$count = 0;
+		}
+	}
+}
+
 for my $q (@ARGV) {
 	print("\n");
 	if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
 		print(colored("ー SKIP $q\n\n", 'yellow'));
 		my @r = $kanjidic->skip_lookup($q);
-		print(@r ? join('', @r) : colored('Nothing found.', 'white'), "\n");
+		print_cut(20, @r);
+		@r or print(colored("Nothing found.", 'white'));
+		print("\n");
 		next;
 	}
 	print(colored("ー $q\n", 'yellow'));

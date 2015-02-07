@@ -7,6 +7,7 @@ use utf8;
 use File::Path qw(make_path);
 use Getopt::Long qw(:config no_auto_abbrev);
 use Term::ANSIColor;
+use Term::ReadKey;
 use Text::Wrap;
 use Wish::Edict2;
 use Wish::KanjiDic;
@@ -67,6 +68,11 @@ if ($load_mode) {
 	exit(0);
 }
 
+################################################################################
+# Lookup part
+
+local $Text::Wrap::columns = (GetTerminalSize())[0];
+
 sub c {
 	my ($t, $c) = @_;
 	-t STDOUT ? colored($t, $c) : $t;
@@ -110,10 +116,9 @@ sub print_entry {
 	$w or return;
 	print(join(' / ', map { c($_, 'blue') } @$w), "\n");
 	$r and print(c('   読 ', 'green'), join('  ', @$r), "\n");
-	$e->{meanings} and print(
-		c('   英 ', 'green'),
-		wrap('', '      ', join(' — ', @{$e->{meanings}}), "\n")
-	);
+	$e->{meanings} and print(color('green'), wrap('   英 ', '      ',
+		color('reset') . join(' — ', @{$e->{meanings}}), "\n"
+	));
 	print("\n");
 }
 

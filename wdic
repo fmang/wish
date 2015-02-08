@@ -99,7 +99,7 @@ sub pretty {
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
 		my $content = join("\n     ", wrapped(@{$e->{$f}}));
-		$f eq 'kun' and $content =~ s/\.([^ ]*)$/c("·$1", 'white')/e;
+		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/e;
 		$out .= "$content\n";
 	}
 	$out;
@@ -118,22 +118,29 @@ sub print_cut {
 	}
 }
 
-print("\n");
+sub do_search {
+	print("\n");
+	for my $q (@_) {
+		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
+			print(c("ー SKIP $q\n\n", 'yellow'));
+			my @r = $kanjidic->skip_lookup($q);
+			print_cut(20, @r);
+			@r or print(c("Nothing found.", 'white'));
+			print("\n\n");
+			next;
+		}
 
-for my $q (@ARGV) {
-	if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
-		print(c("ー SKIP $q\n\n", 'yellow'));
-		my @r = $kanjidic->skip_lookup($q);
-		print_cut(20, @r);
-		@r or print(c("Nothing found.", 'white'));
-		print("\n\n");
-		next;
+		my @kanjis = map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
+		my @words = $edict->search($q);
+		if ($show_homophones && $q =~ /\p{Han}/) {
+			push(@words, $edict->homophones($q));
+		}
+
+		print(c("ー $q\n\n", 'yellow'));
+		$_ and print(pretty($_), "\n") for @kanjis;
+		print(pretty($_), "\n") for @words;
+		@kanjis || @words or print(c("Nothing found.\n\n", 'white'));
 	}
-	print(c("ー $q\n\n", 'yellow'));
-	my @kanjis = map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
-	$_ and print(pretty($_), "\n") for @kanjis;
-	my @words = $edict->search($q);
-	$show_homophones and $q =~ /\p{Han}/ and push(@words, $edict->homophones($q));
-	print(pretty($_), "\n") for @words;
-	@kanjis || @words or print(c("Nothing found.\n\n", 'white'));
 }
+
+do_search(@ARGV);

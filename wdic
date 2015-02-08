@@ -112,9 +112,9 @@ sub pretty {
 
 	my %elems = (
 		on => '音', kun => '訓', nanori => '名', english => '英',
-		readings => '読', meanings => '英',
+		readings => '読', meanings => '英', pos => '詞',
 	);
-	for my $f (qw/on kun nanori english readings meanings/) {
+	for my $f (qw/on kun nanori english readings pos meanings/) {
 		next unless defined $e->{$f};
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';

@@ -148,7 +148,8 @@ if (@ARGV) {
 	do_search(@ARGV);
 } elsif (-t STDIN) {
 	my $term = Term::ReadLine->new('wdic', \*STDIN, \*STDOUT);
-	while (defined ($_ = $term->readline('検索> '))) {
+	$term->ornaments(0);
+	while (defined ($_ = $term->readline(c('検索> ', 'blue')))) {
 		$_ = decode('UTF-8', $_);
 		my @qs = split or next;
 		do_search(@qs);

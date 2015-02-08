@@ -78,22 +78,31 @@ sub c {
 	$use_colors ? colored($t, $c) : $t;
 }
 
-sub print_kanji {
-	my $k = shift;
-	print(c($k->{kanji}, 'blue'));
-	my $prefix = ' ';
-	my %elems = (on => '音', kun => '訓', nanori => '名', english => '英');
-	for my $f (qw/on kun nanori english/) {
-		next unless defined $k->{$f};
-		print($prefix, c($elems{$f}, 'green'));
-		$prefix = ' ';
-		for (@{$k->{$f}}) {
-			$f eq 'kun' and s/\.(.*)$/c("·$1", 'white')/e;
-			print($prefix, "$_\n");
-			$prefix = '      ';
-		}
-		$prefix = '   ';
+sub wrapped {
+	@_;
+}
+
+sub pretty {
+	my $e = shift;
+	my $out;
+
+	my $w = $e->{words} || $e->{readings};
+	$w and $out .= join(' / ', map { c($_, 'blue') } @$w) . "\n";
+	$e->{kanji} and $out .= c($e->{kanji}, 'blue') . "\n";
+
+	my %elems = (
+		on => '音', kun => '訓', nanori => '名', english => '英',
+		readings => '読', meanings => '英',
+	);
+	for my $f (qw/on kun nanori english readings meanings/) {
+		next unless defined $e->{$f};
+		$e->{words} or next if $f eq 'readings';
+		$out .= '  ' . c($elems{$f}, 'green') . ' ';
+		my $content = join("\n     ", wrapped(@{$e->{$f}}));
+		$f eq 'kun' and $content =~ s/\.([^ ]*)$/c("·$1", 'white')/e;
+		$out .= "$content\n";
 	}
+	$out;
 }
 
 sub print_cut {
@@ -107,20 +116,6 @@ sub print_cut {
 			$count = 0;
 		}
 	}
-}
-
-sub print_entry {
-	my $e = shift;
-	my $w = $e->{words} || $e->{readings};
-	my $r = $e->{words} ? $e->{readings} : undef;
-	$w or return;
-	print(join(' / ', map { c($_, 'blue') } @$w), "\n");
-	$r and print(c('   読 ', 'green'), join('  ', @$r), "\n");
-	$e->{meanings} and print(
-		c('   英 ', 'green'),
-		join(' — ', @{$e->{meanings}}), "\n"
-	);
-	print("\n");
 }
 
 print("\n");
@@ -138,14 +133,13 @@ for my $q (@ARGV) {
 	my $found = 0;
 	for (sort(Wish::Edict2::kanjis($q))) {
 		if (my $k = $kanjidic->lookup($_)) {
-			print_kanji($k);
-			print("\n");
+			print(pretty($k), "\n");
 			$found = 1;
 		}
 	}
 	my @words = $edict->search($q);
 	$show_homophones and $q =~ /\p{Han}/ and push(@words, $edict->homophones($q));
 	$found ||= @words;
-	print_entry($_) for @words;
+	print(pretty($_), "\n") for @words;
 	$found or print(c("Nothing found.\n\n", 'white'));
 }

@@ -4,9 +4,11 @@ use strict;
 use warnings;
 use utf8;
 
+use Encode qw(decode encode);
 use File::Path qw(make_path);
 use Getopt::Long qw(:config no_auto_abbrev);
 use Term::ANSIColor;
+use Term::ReadLine;
 use Wish::Edict2;
 use Wish::KanjiDic;
 
@@ -35,11 +37,6 @@ if (!$load_mode and @kanjidic_files || @edict_files) {
 
 if ($load_mode and @ARGV) {
 	die("Please don't load and search at the same time.\n");
-}
-
-if (!$load_mode and !@ARGV) {
-	print("Nothing to do.\n");
-	exit(0);
 }
 
 if ($load_mode && ! -d $dbdir) {
@@ -118,13 +115,15 @@ sub cut {
 }
 
 sub do_search {
+	open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
+	binmode(OUT, ':utf8');
 	print(OUT "\n");
 	for my $q (@_) {
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
 			print(OUT c("ー SKIP $q\n\n", 'yellow'));
 			my @r = $kanjidic->skip_lookup($q);
 			print(OUT cut(20, @r));
-			@r or print(c("Nothing found.", 'white'));
+			@r or print(OUT c("Nothing found.", 'white'));
 			print(OUT "\n\n");
 			next;
 		}
@@ -138,12 +137,25 @@ sub do_search {
 		my $hl = quotemeta($q);
 		print(OUT c("ー $q\n\n", 'yellow'));
 		$_ and print(OUT pretty($_), "\n") for @kanjis;
-		print(OUT pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
+		$_ and print(OUT pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
 		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
+	close(OUT);
 }
 
-open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
-binmode(OUT, ':utf8');
-do_search(@ARGV);
-close(OUT);
+
+if (@ARGV) {
+	do_search(@ARGV);
+} elsif (-t STDIN) {
+	my $term = Term::ReadLine->new('wdic', \*STDIN, \*STDOUT);
+	while (defined ($_ = $term->readline('検索> '))) {
+		$_ = decode('UTF-8', $_);
+		my @qs = split or next;
+		do_search(@qs);
+		$term->addhistory($_);
+	}
+	print("Bye.\n");
+} else {
+	binmode(STDIN, ':utf8');
+	do_search(map { split } <STDIN>);
+}

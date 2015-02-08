@@ -136,9 +136,10 @@ sub do_search {
 			push(@words, $edict->homophones($q));
 		}
 
+		my $hl = quotemeta($q);
 		print(c("ー $q\n\n", 'yellow'));
 		$_ and print(pretty($_), "\n") for @kanjis;
-		print(pretty($_), "\n") for @words;
+		print(pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
 		@kanjis || @words or print(c("Nothing found.\n\n", 'white'));
 	}
 }

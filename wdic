@@ -78,10 +78,6 @@ sub c {
 	$use_colors ? colored($t, $c) : $t;
 }
 
-sub wrapped {
-	@_;
-}
-
 sub pretty {
 	my $e = shift;
 	my $out;
@@ -98,7 +94,7 @@ sub pretty {
 		next unless defined $e->{$f};
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
-		my $content = join("\n     ", wrapped(@{$e->{$f}}));
+		my $content = join("\n     ", @{$e->{$f}});
 		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/e;
 		$out .= "$content\n";
 	}

@@ -143,6 +143,8 @@ sub cut {
 sub compare_entries {
 	my $wa = $a->{words} ? $a->{words}->[0] : $a->{readings}->[0];
 	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
+	$wa =~ s/\(.*\)//g;
+	$wb =~ s/\(.*\)//g;
 	length($wa) <=> length($wb) || $wa cmp $wb
 }
 

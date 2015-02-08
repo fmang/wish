@@ -140,6 +140,12 @@ sub cut {
 	$out;
 }
 
+sub compare_entries {
+	my $wa = $a->{words} ? $a->{words}->[0] : $a->{readings}->[0];
+	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
+	length($wa) <=> length($wb) || $wa cmp $wb
+}
+
 sub do_search {
 	open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
 	binmode(OUT, ':utf8');
@@ -155,7 +161,7 @@ sub do_search {
 		}
 
 		my @kanjis = map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
-		my @words = $edict->search($q);
+		my @words = sort compare_entries $edict->search($q);
 		if ($show_homophones && $q =~ /\p{Han}/) {
 			push(@words, $edict->homophones($q));
 		}

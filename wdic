@@ -146,6 +146,12 @@ sub compare_entries {
 	length($wa) <=> length($wb) || $wa cmp $wb
 }
 
+sub highlight {
+	my ($txt, $hl) = @_;
+	$hl = quotemeta($hl);
+	$txt =~ s/(\033[^m]*m)([^\033]*)($hl)/$1.$2.c($3, 'red').$1/egr;
+}
+
 sub do_search {
 	open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
 	binmode(OUT, ':utf8');
@@ -166,11 +172,9 @@ sub do_search {
 			push(@words, $edict->homophones($q));
 		}
 
-		my $hl = quotemeta($q);
 		print(OUT c("ー $q\n\n", 'yellow'));
 		$_ and print(OUT pretty($_), "\n") for @kanjis;
-		$_ and print(OUT pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
-		# ^ note: glitches when in the middle of blue text
+		$_ and print(OUT highlight(pretty($_), $q), "\n") for @words;
 		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
 	close(OUT);

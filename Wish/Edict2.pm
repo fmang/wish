@@ -144,6 +144,7 @@ sub search {
 		return $self->kanji_lookup($q);
 	}
 	# English maybe?
+	();
 }
 
 sub homophones {

@@ -138,6 +138,7 @@ sub do_search {
 		print(OUT c("ー $q\n\n", 'yellow'));
 		$_ and print(OUT pretty($_), "\n") for @kanjis;
 		$_ and print(OUT pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
+		# ^ note: glitches when in the middle of blue text
 		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
 	close(OUT);

@@ -10,14 +10,14 @@ use Term::ANSIColor;
 use Wish::Edict2;
 use Wish::KanjiDic;
 
-binmode(STDOUT, ":utf8");
-
 my $dbdir = 'db';
 my $load_mode;
 my @kanjidic_files;
 my @edict_files;
 my $use_colors = -t STDOUT;
 my $show_homophones = 1;
+my $pager = $ENV{PAGER} || 'less -R';
+my $use_pager = -t STDOUT;
 
 GetOptions(
 	'database|db|d=s' => \$dbdir,
@@ -26,6 +26,7 @@ GetOptions(
 	'edict=s' => \@edict_files,
 	'color!' => \$use_colors,
 	'homophones!' => \$show_homophones,
+	'pager!' => \$use_pager,
 );
 
 if (!$load_mode and @kanjidic_files || @edict_files) {
@@ -101,28 +102,30 @@ sub pretty {
 	$out;
 }
 
-sub print_cut {
+sub cut {
 	my $n = shift;
 	my $count = 0;
+	my $out;
 	for (@_) {
-		print($_);
+		$out .= $_;
 		$count++;
 		if ($count == $n) {
-			print("\n");
+			$out .= "\n";
 			$count = 0;
 		}
 	}
+	$out;
 }
 
 sub do_search {
-	print("\n");
+	print(OUT "\n");
 	for my $q (@_) {
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
-			print(c("ー SKIP $q\n\n", 'yellow'));
+			print(OUT c("ー SKIP $q\n\n", 'yellow'));
 			my @r = $kanjidic->skip_lookup($q);
-			print_cut(20, @r);
+			print(OUT cut(20, @r));
 			@r or print(c("Nothing found.", 'white'));
-			print("\n\n");
+			print(OUT "\n\n");
 			next;
 		}
 
@@ -133,11 +136,14 @@ sub do_search {
 		}
 
 		my $hl = quotemeta($q);
-		print(c("ー $q\n\n", 'yellow'));
-		$_ and print(pretty($_), "\n") for @kanjis;
-		print(pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
-		@kanjis || @words or print(c("Nothing found.\n\n", 'white'));
+		print(OUT c("ー $q\n\n", 'yellow'));
+		$_ and print(OUT pretty($_), "\n") for @kanjis;
+		print(OUT pretty($_) =~ s/$hl/c($&, 'red')/egr, "\n") for @words;
+		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
 }
 
+open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
+binmode(OUT, ':utf8');
 do_search(@ARGV);
+close(OUT);

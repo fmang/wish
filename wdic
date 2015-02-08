@@ -130,16 +130,10 @@ for my $q (@ARGV) {
 		next;
 	}
 	print(c("ー $q\n\n", 'yellow'));
-	my $found = 0;
-	for (sort(Wish::Edict2::kanjis($q))) {
-		if (my $k = $kanjidic->lookup($_)) {
-			print(pretty($k), "\n");
-			$found = 1;
-		}
-	}
+	my @kanjis = map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
+	$_ and print(pretty($_), "\n") for @kanjis;
 	my @words = $edict->search($q);
 	$show_homophones and $q =~ /\p{Han}/ and push(@words, $edict->homophones($q));
-	$found ||= @words;
 	print(pretty($_), "\n") for @words;
-	$found or print(c("Nothing found.\n\n", 'white'));
+	@kanjis || @words or print(c("Nothing found.\n\n", 'white'));
 }

@@ -12,6 +12,25 @@ use Term::ReadLine;
 use Wish::Edict2;
 use Wish::KanjiDic;
 
+my $usage = <<EOF;
+Usage: wdic [OPTIONS] [QUERY...]
+       wdic --load [--kanjidic FILE] [--edict FILE]
+       wdic --help
+EOF
+
+my $help = <<EOF;
+Options:
+  -d, --database        Specify the location of the database directory.
+  -l, --load            Open the database in write mode.
+  --kanjidic            Load the specified KANJIDIC into the database.
+  --edict               Load the specified EDICT2 into the databse.
+  --[no]color           Enable or disable ANSI colors in the output.
+  --[no]homophones      Also search for homophones.
+  --[no]pager           Display the results in a pager.
+                        Default pager is `less -R` if \$PAGER isn't defined.
+  --help                Show this help.
+EOF
+
 my $dbdir = 'db';
 my $load_mode;
 my @kanjidic_files;
@@ -20,16 +39,23 @@ my $use_colors = -t STDOUT;
 my $show_homophones = 1;
 my $pager = $ENV{PAGER} || 'less -R';
 my $use_pager = -t STDOUT;
+my $show_help;
 
 GetOptions(
-	'database|db|d=s' => \$dbdir,
+	'database|d=s' => \$dbdir,
 	'load|l' => \$load_mode,
 	'kanjidic=s' => \@kanjidic_files,
 	'edict=s' => \@edict_files,
 	'color!' => \$use_colors,
 	'homophones!' => \$show_homophones,
 	'pager!' => \$use_pager,
-);
+	'help|h' => \$show_help,
+) or die($usage);
+
+if ($show_help) {
+	print("$usage\n$help");
+	exit(0);
+}
 
 if (!$load_mode and @kanjidic_files || @edict_files) {
 	die("Cannot load a dictionary file without --load.\n");

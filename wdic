@@ -24,10 +24,11 @@ Options:
   -l, --load            Open the database in write mode.
   --kanjidic            Load the specified KANJIDIC into the database.
   --edict               Load the specified EDICT2 into the databse.
-  --[no]color           Enable or disable ANSI colors in the output.
   --[no]homophones      Also search for homophones.
+  --[no]kanji           Print kanji data along with words.
+  --[no]color           Enable or disable ANSI colors in the output.
   --[no]pager           Display the results in a pager.
-                        Default pager is `less -R` if \$PAGER isn't defined.
+                        Default pager is `less -R -e` if \$PAGER isn't defined.
   --help                Show this help.
 EOF
 
@@ -35,9 +36,10 @@ my $dbdir = 'db';
 my $load_mode;
 my @kanjidic_files;
 my @edict_files;
-my $use_colors = -t STDOUT;
 my $show_homophones = 1;
-my $pager = $ENV{PAGER} || 'less -R';
+my $show_kanji = 0;
+my $use_colors = -t STDOUT;
+my $pager = $ENV{PAGER} || 'less -R -e';
 my $use_pager = -t STDOUT;
 my $show_help;
 
@@ -48,6 +50,7 @@ GetOptions(
 	'edict=s' => \@edict_files,
 	'color!' => \$use_colors,
 	'homophones!' => \$show_homophones,
+	'kanji!' => \$show_kanji,
 	'pager!' => \$use_pager,
 	'help|h' => \$show_help,
 ) or die($usage);
@@ -168,7 +171,8 @@ sub do_search {
 			next;
 		}
 
-		my @kanjis = map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
+		my @kanjis = !$show_kanji ? () :
+			map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
 		my @words = sort compare_entries $edict->search($q);
 		if ($show_homophones && $q =~ /\p{Han}/) {
 			push(@words, $edict->homophones($q));

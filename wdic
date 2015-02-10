@@ -7,6 +7,7 @@ use utf8;
 use Encode qw(decode encode);
 use File::Path qw(make_path);
 use Getopt::Long qw(:config no_auto_abbrev);
+use List::Util qw(any);
 use Term::ANSIColor;
 use Term::ReadLine;
 use Wish::Edict2;
@@ -144,11 +145,15 @@ sub cut {
 }
 
 sub compare_entries {
+	my ($q, $a, $b) = @_;
+	$q = quotemeta($q);
 	my $wa = $a->{words} ? $a->{words}->[0] : $a->{readings}->[0];
 	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
 	$wa =~ s/\(.*\)//g;
 	$wb =~ s/\(.*\)//g;
-	length($wa) <=> length($wb) || $wa cmp $wb
+	my $fa = ($a->{words} && any { $_ =~ /$q/ } @{$a->{words}}) ? 0 : 1;
+	my $fb = ($b->{words} && any { $_ =~ /$q/ } @{$b->{words}}) ? 0 : 1;
+	$fa <=> $fb || length($wa) <=> length($wb) || $wa cmp $wb;
 }
 
 sub highlight {
@@ -173,7 +178,7 @@ sub do_search {
 
 		my @kanjis = !$show_kanji ? () :
 			map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
-		my @words = sort compare_entries $edict->search($q);
+		my @words = sort { compare_entries($q, $a, $b) } $edict->search($q);
 		if ($show_homophones && $q =~ /\p{Han}/) {
 			push(@words, $edict->homophones($q));
 		}

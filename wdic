@@ -121,7 +121,7 @@ sub pretty {
 		next unless defined $e->{$f};
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
-		my $content = join("\n     ", @{$e->{$f}});
+		my $content = join($f eq 'pos' ? ', ' : "\n     ", @{$e->{$f}});
 		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/e;
 		$out .= "$content\n";
 	}

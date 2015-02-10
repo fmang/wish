@@ -40,7 +40,7 @@ my @edict_files;
 my $show_homophones = 1;
 my $show_kanji = 0;
 my $use_colors = -t STDOUT;
-my $pager = $ENV{PAGER} || 'less -R -e';
+my $pager = $ENV{PAGER};
 my $use_pager = -t STDOUT;
 my $show_help;
 
@@ -163,6 +163,7 @@ sub highlight {
 }
 
 sub do_search {
+	$pager ||= 'less -R';
 	open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
 	binmode(OUT, ':utf8');
 	print(OUT "\n");
@@ -195,6 +196,7 @@ sub do_search {
 if (@ARGV) {
 	do_search(@ARGV);
 } elsif (-t STDIN) {
+	$pager ||= 'less -R -e';
 	my $term = Term::ReadLine->new('wdic', \*STDIN, \*STDOUT);
 	$term->ornaments(0);
 	while (defined ($_ = $term->readline(c('検索> ', 'blue')))) {

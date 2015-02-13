@@ -164,6 +164,7 @@ sub highlight {
 
 sub do_search {
 	$pager ||= 'less -R';
+	local $SIG{PIPE} = 'IGNORE';
 	open(OUT, $use_pager ? "| $pager" : '>&STDOUT') or open(OUT, '>&STDOUT');
 	binmode(OUT, ':utf8');
 	print(OUT "\n");

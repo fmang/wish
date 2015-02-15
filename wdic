@@ -151,9 +151,13 @@ sub compare_entries {
 	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
 	$wa =~ s/\(.*\)//g;
 	$wb =~ s/\(.*\)//g;
-	my $fa = ($a->{words} && any { $_ =~ /$q/ } @{$a->{words}}) ? 0 : 1;
-	my $fb = ($b->{words} && any { $_ =~ /$q/ } @{$b->{words}}) ? 0 : 1;
-	$fa <=> $fb || length($wa) <=> length($wb) || $wa cmp $wb;
+	my $hl_cmp = 0;
+	unless ($q =~ /^[\p{Kana}\p{Hira}]*$/) {
+		my $fa = ($a->{words} && any { $_ =~ /$q/ } @{$a->{words}}) ? 0 : 1;
+		my $fb = ($b->{words} && any { $_ =~ /$q/ } @{$b->{words}}) ? 0 : 1;
+		$hl_cmp = $fa <=> $fb;
+	}
+	$hl_cmp || length($wa) <=> length($wb) || $wa cmp $wb;
 }
 
 sub highlight {

@@ -11,6 +11,7 @@ use Term::ANSIColor;
 use Term::ReadLine;
 use Wish::Edict2;
 use Wish::KanjiDic;
+use Wish::Unicode qw(kanjis);
 
 my $usage = <<EOF;
 Usage: wdic [OPTIONS] [QUERY...]
@@ -166,7 +167,7 @@ sub do_search {
 		}
 
 		my @kanjis = !$show_kanji ? () :
-			map { $kanjidic->lookup($_) } Wish::Edict2::kanjis($q);
+			map { $kanjidic->lookup($_) } kanjis($q);
 		my @words = $edict->search($q);
 		if ($show_homophones && $q =~ /\p{Han}/) {
 			push(@words, $edict->homophones($q));

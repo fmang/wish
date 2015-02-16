@@ -2,12 +2,13 @@ package Wish::Edict2;
 
 use strict;
 use warnings;
-use utf8;
 
 use DB_File;
 use DBM_Filter;
 use File::Spec::Functions;
 use List::Util qw(any max);
+
+use Wish::Unicode qw(kanjis to_katakana kanji_count);
 
 sub init {
 	my $class = shift;
@@ -119,22 +120,6 @@ sub kanji_lookup {
 	}
 	my @r = grep { $counts{$_} == $n } keys %counts;
 	$self->entl_lookup(@r);
-}
-
-sub kanjis {
-	my %k;
-	for (@_) {
-		$k{$_} = undef for /\p{Han}/g;
-	}
-	keys %k;
-}
-
-sub to_katakana {
-	shift =~ tr/あ-ゖ/ア-ヶ/r;
-}
-
-sub kanji_count {
-	scalar (() = shift =~ /\p{Han}/g)
 }
 
 sub max_kanji_count {

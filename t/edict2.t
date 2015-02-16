@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 19;
+use Test::More tests => 20;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -40,6 +40,7 @@ is($dic->lookup('蒼い'), 1, 'Alternative kanji lookup');
 
 is(Wish::Edict2::to_katakana('よう'), 'ヨウ', 'Katakana conversion');
 is_deeply([sort(Wish::Edict2::kanjis('引き離す', '赤い'))], [sort('引', '離', '赤')], 'Kanji filter');
+is(Wish::Edict2::kanji_count('引き離す'), 2, 'Kanji count');
 
 my @r = $dic->search('蒼い');
 is(@r, 1, 'Alternative kanji search');

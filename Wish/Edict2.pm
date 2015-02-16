@@ -7,7 +7,7 @@ use utf8;
 use DB_File;
 use DBM_Filter;
 use File::Spec::Functions;
-use List::Util qw(any);
+use List::Util qw(any max);
 
 sub init {
 	my $class = shift;
@@ -133,20 +133,32 @@ sub to_katakana {
 	shift =~ tr/あ-ゖ/ア-ヶ/r;
 }
 
+sub kanji_count {
+	scalar (() = shift =~ /\p{Han}/g)
+}
+
+sub max_kanji_count {
+	max map { kanji_count($_) } @{shift->{words}}
+}
+
+sub main {
+	my $e = shift;
+	my $w = $e->{words} ? $e->{words}->[0] : $e->{readings}->[0];
+	$w =~ s/\(.*\)//g;
+	$w
+}
+
+sub highlighted {
+	my ($q, $e) = @_;
+	$e->{words} and any { $_ =~ /$q/ } @{$e->{words}}
+}
+
 sub compare_entries {
 	my ($q, $a, $b) = @_;
 	$q = quotemeta($q);
-	my $wa = $a->{words} ? $a->{words}->[0] : $a->{readings}->[0];
-	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
-	$wa =~ s/\(.*\)//g;
-	$wb =~ s/\(.*\)//g;
-	my $hl_cmp = 0;
-	unless ($q =~ /^[\p{Kana}\p{Hira}]*$/) {
-		my $fa = ($a->{words} && any { $_ =~ /$q/ } @{$a->{words}}) ? 0 : 1;
-		my $fb = ($b->{words} && any { $_ =~ /$q/ } @{$b->{words}}) ? 0 : 1;
-		$hl_cmp = $fa <=> $fb;
-	}
-	$hl_cmp || length($wa) <=> length($wb) || $wa cmp $wb;
+	highlighted($q, $b) <=> highlighted($q, $a)
+	|| max_kanji_count($a) <=> max_kanji_count($b)
+	|| main($a) cmp main($b)
 }
 
 sub search {
@@ -154,9 +166,8 @@ sub search {
 	my @results;
 	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
 		@results = $self->reading_lookup($q);
-		push(@results, $self->prefix_lookup($q));
+		push(@results, sort { main($a) cmp main($b) } $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect
-		@results = sort { compare_entries($q, $a, $b) } @results;
 	} elsif ($q =~ /\p{Han}/) {
 		@results = sort { compare_entries($q, $a, $b) } $self->kanji_lookup($q);
 	}

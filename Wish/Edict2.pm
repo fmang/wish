@@ -133,18 +133,35 @@ sub to_katakana {
 	shift =~ tr/あ-ゖ/ア-ヶ/r;
 }
 
+sub compare_entries {
+	my ($q, $a, $b) = @_;
+	$q = quotemeta($q);
+	my $wa = $a->{words} ? $a->{words}->[0] : $a->{readings}->[0];
+	my $wb = $b->{words} ? $b->{words}->[0] : $b->{readings}->[0];
+	$wa =~ s/\(.*\)//g;
+	$wb =~ s/\(.*\)//g;
+	my $hl_cmp = 0;
+	unless ($q =~ /^[\p{Kana}\p{Hira}]*$/) {
+		my $fa = ($a->{words} && any { $_ =~ /$q/ } @{$a->{words}}) ? 0 : 1;
+		my $fb = ($b->{words} && any { $_ =~ /$q/ } @{$b->{words}}) ? 0 : 1;
+		$hl_cmp = $fa <=> $fb;
+	}
+	$hl_cmp || length($wa) <=> length($wb) || $wa cmp $wb;
+}
+
 sub search {
 	my ($self, $q) = @_;
+	my @results;
 	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
-		my @results = $self->reading_lookup($q);
+		@results = $self->reading_lookup($q);
 		push(@results, $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect
-		return @results;
+		@results = sort { compare_entries($q, $a, $b) } @results;
 	} elsif ($q =~ /\p{Han}/) {
-		return $self->kanji_lookup($q);
+		@results = sort { compare_entries($q, $a, $b) } $self->kanji_lookup($q);
 	}
 	# English maybe?
-	();
+	@results;
 }
 
 sub homophones {

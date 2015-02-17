@@ -1,0 +1,12 @@
+bin/wdic
+Build.PL
+lib/Wish/Edict2.pm
+lib/Wish/KanjiDic.pm
+lib/Wish/Unicode.pm
+MANIFEST			This list of files
+t/edict2.t
+t/kanji.t
+t/kanjidic.t
+t/unicode.t
+t/wdic.t
+t/word.t

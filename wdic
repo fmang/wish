@@ -6,6 +6,7 @@ use utf8;
 
 use Encode qw(decode encode);
 use File::Path qw(make_path);
+use File::Spec::Functions qw(catdir);
 use Getopt::Long qw(:config no_auto_abbrev);
 use Term::ANSIColor;
 use Term::ReadLine;
@@ -33,7 +34,7 @@ Options:
   --help                Show this help.
 EOF
 
-my $dbdir = 'db';
+my $dbdir = $ENV{HOME} ? catdir($ENV{HOME}, '.wish') : 'db';
 my $load_mode;
 my @kanjidic_files;
 my @edict_files;
@@ -77,7 +78,7 @@ if ($load_mode && ! -d $dbdir) {
 my $kanjidic = Wish::KanjiDic->new($dbdir, readonly => !$load_mode);
 my $edict = Wish::Edict2->new($dbdir, readonly => !$load_mode);
 
-$kanjidic && $edict or die("Couldn't open the dictionary database: $!.\n");
+$kanjidic && $edict or die("Couldn't open the dictionary database at $dbdir: $!.\n");
 
 for my $file (@kanjidic_files) {
 	print(STDERR "Loading KANJIDIC from $file...\n");

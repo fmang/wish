@@ -13,10 +13,11 @@ Lots of dictionary tools exist, but have several issues, including being online
 only, sorting results in an awkward way, or being too strict.
 
 Wish search have the following features:
-- Indifferent kana nature. Writing in hiragana or katakana is the same.
-- Homophone lookup.
-- Alternative kanjis or readings are grouped.
-- Similar words also displayed. For example, 離す and 離れる.
+
+* Indifferent kana nature. Writing in hiragana or katakana is the same.
+* Homophone lookup.
+* Alternative kanjis or readings are grouped.
+* Similar words also displayed. For example, 離す and 離れる.
 
 Results are storted in a fashion meant for relevant words to appear first, but
 it's not perfect.
@@ -48,7 +49,7 @@ Use
 ### Initialization
 
 Before Wish can be used, the word database needs to be built using
-(KANJIDIC)[kd] and (EDICT2)[ed] files.
+[KANJIDIC][kd] and [EDICT2][ed] files.
 
 [kd]: http://www.csse.monash.edu.au/~jwb/kanjidic.html
 [ed]: http://www.edrdg.org/jmdict/edict.html

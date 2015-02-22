@@ -4,10 +4,12 @@ use Test::More tests => 9;
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
 
-system('./wdic', '--bad-option');
+my $wdic = 'bin/wdic';
+
+system($wdic, '--bad-option');
 isnt($?, 0, 'Bad option');
 
-system('./wdic', '--help');
+system($wdic, '--help');
 is($?, 0, 'Help');
 
 my $dir = tempdir('wishXXXX', CLEANUP => 1);
@@ -38,13 +40,13 @@ dic_data 'edict2.demo' => <<EOF;
 噯;噯気;噫気;噯木(iK) [おくび(噯,噯気);あいき(噯気,噫気,噯木)] /(n) (uk) belch/eructation/burp/EntL2007450X/
 EOF
 
-system('./wdic', '-d', $db, '--load', '--edict', catfile($dir, 'edict2.demo'),
+system($wdic, '-d', $db, '--load', '--edict', catfile($dir, 'edict2.demo'),
 	'--kanjidic', catfile($dir, 'kanjidic.demo'));
 is($?, 0, 'Loading');
 ok(-d $db, 'Database directory creation');
 
 $ENV{PAGER} = 'touch ' . catdir($dir, 'pager');
-my $wdic = "./wdic -d $db --nocolor --nopager";
+my $wdic = "$wdic -d $db --nocolor --nopager";
 unlike(`$wdic 青い`, qr/\033/, 'No colors');
 ok(! -e catdir($dir, 'pager'), 'No pager');
 

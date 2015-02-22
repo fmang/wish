@@ -1,10 +1,10 @@
 Wish
 ====
 
-Wish is a Perl library for looking up words and kanjis from a Japanese word and
+Wish is a Perl tool for looking up words and kanjis from a Japanese word and
 kanji database. The current supported formats are KANJIDIC and EDICT2.
 
-A command-line tool, `wdic`, is provided as a front-end.
+A command-line tool, `wdic`, is provided as a front end.
 
 Features
 --------

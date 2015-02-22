@@ -1,3 +1,22 @@
+*.bak
+*~
+
 *.sw?
 
-data
+blib/
+_build/
+Build
+MANIFEST.SKIP.bak
+MYMETA.json
+MYMETA.yml
+
+aclocal.m4
+autom4te.cache/
+config.log
+config.status
+configure
+install-sh
+Makefile
+Makefile.in
+missing
+wdic

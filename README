@@ -1,0 +1,71 @@
+Wish
+====
+
+Wish is a Perl library for looking up words and kanjis from a Japanese word and
+kanji database. The current supported formats are KANJIDIC and EDICT2.
+
+A command-line tool, `wdic`, is provided as a front-end.
+
+Features
+--------
+
+Lots of dictionary tools exist, but have several issues, including being online
+only, sorting results in an awkward way, or being too strict.
+
+Wish search have the following features:
+- Indifferent kana nature. Writing in hiragana or katakana is the same.
+- Homophone lookup.
+- Alternative kanjis or readings are grouped.
+- Similar words also displayed. For example, 離す and 離れる.
+
+Results are storted in a fashion meant for relevant words to appear first, but
+it's not perfect.
+
+Install
+-------
+
+### Unixy install
+
+For the unfamiliar with Perl, the standard autotools procedure is
+recommended:
+
+	./configure --prefix=...
+	make
+	make install
+
+### Perly install
+
+A `Build.PL` file is also supplied for a standard CPAN install using
+`Module::Build`:
+
+	perl Build.PL --prefix=...
+	./Build test
+	./Build install
+
+Use
+---
+
+### Initialization
+
+Before Wish can be used, the word database needs to be built using
+(KANJIDIC)[kd] and (EDICT2)[ed] files.
+
+[kd]: http://www.csse.monash.edu.au/~jwb/kanjidic.html
+[ed]: http://www.edrdg.org/jmdict/edict.html
+
+You can download and load them like this:
+
+	wget http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz
+	gunzip kanjidic.gz
+	wget http://ftp.monash.edu.au/pub/nihongo/edict2.gz
+	gunzip edict2.gz
+
+	# Build the database, takes a little while
+	wdic --load --kanjidic kanjidic --edict edict2
+
+### Lookup
+
+Lookup can be performed from the command-line, supplying lookup terms as
+arguments, or as a REPL if `wdic` is called without arguments.
+
+Check the man page for more information.

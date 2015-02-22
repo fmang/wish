@@ -14,6 +14,8 @@ use Wish::Edict2;
 use Wish::KanjiDic;
 use Wish::Unicode qw(kanjis);
 
+our $VERSION = '1.0';
+
 my $usage = <<EOF;
 Usage: wdic [OPTIONS] [QUERY...]
        wdic --load [--kanjidic FILE] [--edict FILE]
@@ -21,6 +23,9 @@ Usage: wdic [OPTIONS] [QUERY...]
 EOF
 
 my $help = <<EOF;
+wdic version $VERSION
+
+$usage
 Options:
   -d, --database        Specify the location of the database directory.
   -l, --load            Open the database in write mode.
@@ -58,7 +63,7 @@ GetOptions(
 ) or die($usage);
 
 if ($show_help) {
-	print("$usage\n$help");
+	print($help);
 	exit(0);
 }
 

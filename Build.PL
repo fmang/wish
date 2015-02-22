@@ -5,7 +5,7 @@ my $builder = Module::Build->new(
 	dist_abstract => 'Japanese dictionary.',
 	license => 'perl',
 	dist_author => 'Frédéric Mangano <fmang+perl@mg0.fr>',
-	dist_version => 1.0,
+	dist_version_from => 'bin/wdic',
 );
 
 $builder->create_build_script();

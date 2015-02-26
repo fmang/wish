@@ -1,4 +1,5 @@
 bin/wdic
+bin/wish.fcgi
 Build.PL
 lib/Wish/Edict2.pm
 lib/Wish/KanjiDic.pm

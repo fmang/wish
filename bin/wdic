@@ -323,7 +323,6 @@ if (@ARGV) {
 		$_ = decode('UTF-8', $_);
 		my @qs = split or next;
 		do_search(@qs);
-		$term->addhistory($_);
 	}
 	print("Bye.\n");
 } else {

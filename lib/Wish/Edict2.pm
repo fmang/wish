@@ -152,15 +152,12 @@ sub compare_entries {
 sub search {
 	my ($self, $q) = @_;
 	my @results;
-	my $kl = kanji_count($q);
 	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
 		@results = $self->reading_lookup($q);
 		push(@results, sort { main($a) cmp main($b) } $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect
-	} elsif ($kl != 0) {
-		@results = sort { compare_entries($q, $a, $b) }
-			($kl == 1 ? $self->prefix_lookup($q =~ s/(\p{Han}).*$/$1/r)
-			          : $self->kanji_lookup($q));
+	} elsif ($q =~ /\p{Han}/) {
+		@results = sort { compare_entries($q, $a, $b) } $self->kanji_lookup($q);
 	}
 	# English maybe?
 	@results;

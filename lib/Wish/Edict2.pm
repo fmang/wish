@@ -129,21 +129,14 @@ sub main {
 	$w
 }
 
-sub cmp_positive {
-	# negative numbers are like infinity
-	my ($a, $b) = @_;
-	$a < 0 ? ($b < 0 ? 0 : 1)
-	       : ($b < 0 ? -1 : $a <=> $b)
-}
-
 sub highlight_pos {
 	my ($q, $e) = @_;
 	$e->{words} or return -1;
-	my $min = -1;
+	my $min = 65535;
 	my $i;
 	for (@{$e->{words}}) {
 		$i = index($_, $q);
-		if ($i >= 0 && ($min < 0 || $i < $min)) {
+		if ($i >= 0 && $i < $min) {
 			$min = $i;
 			$e->{main} = $_;
 		}
@@ -165,7 +158,7 @@ sub search {
 			$_->{hl} = highlight_pos($q, $_);
 		}
 		@results = sort {
-			cmp_positive($a->{hl}, $b->{hl}) || $a->{main} cmp $b->{main}
+			$a->{hl} <=> $b->{hl} || $a->{main} cmp $b->{main}
 		} @results;
 	}
 	# English maybe?

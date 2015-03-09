@@ -139,8 +139,16 @@ sub cmp_positive {
 sub highlight_pos {
 	my ($q, $e) = @_;
 	$e->{words} or return -1;
-	my @indices = map { index($_, $q) } @{$e->{words}};
-	reduce { cmp_positive($a, $b) < 0 ? $a : $b } @indices
+	my $min = -1;
+	my $i;
+	for (@{$e->{words}}) {
+		$i = index($_, $q);
+		if ($i >= 0 && ($min < 0 || $i < $min)) {
+			$min = $i;
+			$e->{main} = $_;
+		}
+	}
+	$min
 }
 
 sub search {

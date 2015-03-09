@@ -6,7 +6,7 @@ use warnings;
 use DB_File;
 use DBM_Filter;
 use File::Spec::Functions;
-use List::Util qw(any max);
+use List::Util qw(any max reduce);
 
 use Wish::Unicode qw(kanjis to_katakana kanji_count);
 
@@ -133,15 +133,23 @@ sub main {
 	$w
 }
 
-sub highlighted {
+sub cmp_positive {
+	# negative numbers are like infinity
+	my ($a, $b) = @_;
+	$a < 0 ? ($b < 0 ? 0 : 1)
+	       : ($b < 0 ? -1 : $a <=> $b)
+}
+
+sub highlight_pos {
 	my ($q, $e) = @_;
-	$e->{words} and any { $_ =~ /$q/ } @{$e->{words}}
+	$e->{words} or return -1;
+	my @indices = map { index($_, $q) } @{$e->{words}};
+	reduce { cmp_positive($a, $b) < 0 ? $a : $b } @indices
 }
 
 sub compare_entries {
 	my ($q, $a, $b) = @_;
-	$q = quotemeta($q);
-	highlighted($q, $b) <=> highlighted($q, $a)
+	cmp_positive(highlight_pos($q, $a), highlight_pos($q, $b))
 	|| max_kanji_count($a) <=> max_kanji_count($b)
 	|| main($a) cmp main($b)
 }

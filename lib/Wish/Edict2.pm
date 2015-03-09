@@ -122,10 +122,6 @@ sub kanji_lookup {
 	$self->entl_lookup(@r);
 }
 
-sub max_kanji_count {
-	max map { kanji_count($_) } @{shift->{words}}
-}
-
 sub main {
 	my $e = shift;
 	my $w = $e->{words} ? $e->{words}->[0] : $e->{readings}->[0];
@@ -150,7 +146,6 @@ sub highlight_pos {
 sub compare_entries {
 	my ($q, $a, $b) = @_;
 	cmp_positive(highlight_pos($q, $a), highlight_pos($q, $b))
-	|| max_kanji_count($a) <=> max_kanji_count($b)
 	|| main($a) cmp main($b)
 }
 

@@ -278,7 +278,7 @@ sub cut {
 sub highlight {
 	my ($txt, $hl) = @_;
 	$hl = quotemeta($hl);
-	$txt =~ s/(\033[^m]*m)([^\033]*)($hl)/$1.$2.c($3, 'red').$1/egr;
+	$txt =~ s/(\033[^m]*m)([^\033]*?)($hl)/$1.$2.c($3, 'red').$1/egr;
 }
 
 sub do_search {

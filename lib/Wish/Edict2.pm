@@ -143,12 +143,6 @@ sub highlight_pos {
 	reduce { cmp_positive($a, $b) < 0 ? $a : $b } @indices
 }
 
-sub compare_entries {
-	my ($q, $a, $b) = @_;
-	cmp_positive(highlight_pos($q, $a), highlight_pos($q, $b))
-	|| main($a) cmp main($b)
-}
-
 sub search {
 	my ($self, $q) = @_;
 	my @results;
@@ -157,7 +151,14 @@ sub search {
 		push(@results, sort { main($a) cmp main($b) } $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect
 	} elsif ($q =~ /\p{Han}/) {
-		@results = sort { compare_entries($q, $a, $b) } $self->kanji_lookup($q);
+		@results = $self->kanji_lookup($q);
+		for (@results) {
+			$_->{main} = main($_);
+			$_->{hl} = highlight_pos($q, $_);
+		}
+		@results = sort {
+			cmp_positive($a->{hl}, $b->{hl}) || $a->{main} cmp $b->{main}
+		} @results;
 	}
 	# English maybe?
 	@results;

@@ -6,7 +6,7 @@ use warnings;
 use DB_File;
 use DBM_Filter;
 use File::Spec::Functions;
-use List::Util qw(any max reduce);
+use List::Util qw(any);
 
 use Wish::Unicode qw(kanjis to_katakana kanji_count);
 

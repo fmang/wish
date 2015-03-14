@@ -243,7 +243,7 @@ sub pretty {
 
 	my $w = $e->{words} || $e->{readings};
 	$w and $out .= join(' / ', map { c($use_colors ? s/($hl)/color('red').$1.color('blue')/egr : $_, 'blue') } @$w) . "\n";
-	$e->{kanji} and $out .= c($e->{kanji}, 'blue') . "\n";
+	$e->{kanji} and $out .= c($e->{kanji}, 'cyan') . "\n";
 
 	my %elems = (
 		on => '音', kun => '訓', nanori => '名', english => '英',

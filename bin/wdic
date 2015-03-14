@@ -249,12 +249,13 @@ sub pretty {
 		on => '音', kun => '訓', nanori => '名', english => '英',
 		readings => '読', meanings => '英', pos => '詞',
 	);
+	my %oneline = ('pos' => 1, 'on' => 1, 'kun' => 1, 'nanori' => 1);
 	for my $f (qw/on kun nanori english readings pos meanings/) {
 		next unless defined $e->{$f};
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
-		my $content = join($f eq 'pos' ? ', ' : "\n     ", @{$e->{$f}});
-		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/eg;
+		my $content = join($oneline{$f} ? ', ' : "\n     ", @{$e->{$f}});
+		$f eq 'kun' and $content =~ s/\.([^, ]*)/c("·$1", 'white')/eg;
 		$content =~ s/($hl)/c($1, 'red')/eg if $hl;
 		$out .= "$content\n";
 	}

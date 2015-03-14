@@ -254,7 +254,7 @@ sub pretty {
 		$e->{words} or next if $f eq 'readings';
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
 		my $content = join($f eq 'pos' ? ', ' : "\n     ", @{$e->{$f}});
-		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/e;
+		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/eg;
 		$content =~ s/($hl)/c($1, 'red')/eg if $hl;
 		$out .= "$content\n";
 	}

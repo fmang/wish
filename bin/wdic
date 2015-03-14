@@ -238,11 +238,11 @@ sub c {
 }
 
 sub pretty {
-	my $e = shift;
+	my ($e, $hl) = @_;
 	my $out;
 
 	my $w = $e->{words} || $e->{readings};
-	$w and $out .= join(' / ', map { c($_, 'blue') } @$w) . "\n";
+	$w and $out .= join(' / ', map { c($use_colors ? s/($hl)/color('red').$1.color('blue')/egr : $_, 'blue') } @$w) . "\n";
 	$e->{kanji} and $out .= c($e->{kanji}, 'blue') . "\n";
 
 	my %elems = (
@@ -255,6 +255,7 @@ sub pretty {
 		$out .= '  ' . c($elems{$f}, 'green') . ' ';
 		my $content = join($f eq 'pos' ? ', ' : "\n     ", @{$e->{$f}});
 		$f eq 'kun' and $content =~ s/\.([^ ]*)/c("·$1", 'white')/e;
+		$content =~ s/($hl)/c($1, 'red')/eg if $hl;
 		$out .= "$content\n";
 	}
 	$out;
@@ -273,12 +274,6 @@ sub cut {
 		}
 	}
 	$out;
-}
-
-sub highlight {
-	my ($txt, $hl) = @_;
-	$hl = quotemeta($hl);
-	$txt =~ s/(\033[^m]*m)([^\033]*?)($hl)/$1.$2.c($3, 'red').$1/egr;
 }
 
 sub do_search {
@@ -304,9 +299,10 @@ sub do_search {
 			push(@words, $edict->homophones($q));
 		}
 
+		my $hl = quotemeta($q);
 		print(OUT c("ー $q\n\n", 'yellow'));
 		$_ and print(OUT pretty($_), "\n") for @kanjis;
-		$_ and print(OUT highlight(pretty($_), $q), "\n") for @words;
+		$_ and print(OUT pretty($_, $hl), "\n") for @words;
 		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
 	close(OUT);

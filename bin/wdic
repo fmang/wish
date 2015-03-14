@@ -105,7 +105,8 @@ Also search for homophones. By default, homophones are shown.
 
 =item B<--kanji>, B<--nokanji>
 
-Print kanji data along with words. By default, kanji information isn't shown.
+Print kanji information at the end of search results. By default, kanji
+information isn't shown.
 
 =item B<--color>, B<--nocolor>
 
@@ -302,8 +303,8 @@ sub do_search {
 
 		my $hl = quotemeta($q);
 		print(OUT c("ー $q\n\n", 'yellow'));
-		$_ and print(OUT pretty($_), "\n") for @kanjis;
 		$_ and print(OUT pretty($_, $hl), "\n") for @words;
+		$_ and print(OUT pretty($_), "\n") for @kanjis;
 		@kanjis || @words or print(OUT c("Nothing found.\n\n", 'white'));
 	}
 	close(OUT);

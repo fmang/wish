@@ -8,11 +8,10 @@ use Encode qw(decode);
 use CGI qw(:standard);
 use CGI::Fast;
 
-print "Ready!\n";
-
 sub search_page {
 	print header(-type => 'text/html', -charset => 'utf-8');
-	my $query = decode utf8 => param('q');
+	my $query = param('q');
+	$query = $query ? decode utf8 => $query : '';
 	my $escaped_query = escapeHTML($query);
 	my $title = $query ? "$escaped_query - Wish" : "Wish";
 	print <<EOF

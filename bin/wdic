@@ -294,8 +294,7 @@ sub do_search {
 			next;
 		}
 
-		my @kanjis = !$show_kanji ? () : map { $kanjidic->lookup($_) } kanjis($q);
-		@kanjis = sort(@kanjis);
+		my @kanjis = !$show_kanji ? () : map { $kanjidic->lookup($_) } sort(kanjis($q));
 		my @words = $edict->search($q);
 		if ($show_homophones && $q =~ /\p{Han}/) {
 			push(@words, $edict->homophones($q));

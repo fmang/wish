@@ -9,11 +9,35 @@ use CGI::Carp;
 use CGI::Fast;
 use Encode qw(decode);
 use File::Spec::Functions qw(catdir);
+use Getopt::Long qw(:config no_auto_abbrev);
 use Wish::Edict2;
 use Wish::KanjiDic;
 use Wish::Unicode qw(kanjis);
 
-my $dbdir = catdir($ENV{HOME}, '.wish');
+my $usage = <<EOF;
+Usage: wish.fcgi [-d DATABASE]
+       wish.fcgi --help
+EOF
+
+my $help = <<EOF;
+$usage
+Options:
+  -d, --database        Specify the location of the database directory.
+  -h, --help            Show this help.
+EOF
+
+my $dbdir = $ENV{HOME} ? catdir($ENV{HOME}, '.wish') : 'db';
+my $show_help;
+
+GetOptions(
+	'database|d=s' => \$dbdir,
+	'help|h' => \$show_help,
+) or die($usage);
+
+if ($show_help) {
+	print($help);
+	exit(0);
+}
 
 my $kanjidic = Wish::KanjiDic->new($dbdir);
 my $edict = Wish::Edict2->new($dbdir);

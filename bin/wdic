@@ -74,13 +74,13 @@ mode will be caught by the IME in Japanese mode.
 
 =over 4
 
-=item -d, B<--database>
+=item B<-d>, B<--database>
 
 Specify the location of the database directory.
 
 By default, F<~/.wish> is used.
 
-=item -l, B<--load>
+=item B<-l>, B<--load>
 
 Open the database in write mode.
 
@@ -119,7 +119,7 @@ defined.
 
 This option is enabled by default when the standard output is a terminal.
 
-=item B<--help>
+=item B<-h>, B<--help>
 
 Display a brief help, along with the version number.
 
@@ -162,7 +162,7 @@ Options:
   --[no]kanji           Print kanji data along with words.
   --[no]color           Enable or disable ANSI colors in the output.
   --[no]pager           Display the results in the system's pager.
-  --help                Show this help.
+  -h, --help            Show this help.
 EOF
 
 my $dbdir = $ENV{HOME} ? catdir($ENV{HOME}, '.wish') : 'db';

@@ -1,5 +1,58 @@
 #!/usr/bin/env perl
 
+=encoding utf8
+
+=head1 NAME
+
+wish.fcgi - Japanese dictionary lookup web interface
+
+=head1 SYNOPSIS
+
+wish.fcgi [-d DATABASE]
+
+=head1 DESCRIPTION
+
+Wish is a Perl tool for looking up words and kanjis from a Japanese word and
+kanji database. The current supported formats are KANJIDIC and EDICT2.
+
+B<wish.fcgi> is its FastCGI interface, also compatible with CGI.
+
+=head2 Managing dictionaries
+
+Databases are created and managed by the B<wdic> tool. See its man page for
+further information.
+
+=head2 About FastCGI
+
+CGI and FastCGI are standard interfaces for web servers to call programs that
+generate dynamic pages. Each web server has its own way to configure these.
+Wish doesn't require any settings but the standard ones.
+
+CGI is highly discouraged as the database would be reloaded every time a page
+is generated. Use FastCGI instead.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-d>, B<--database>
+
+Specify the location of the database directory.
+
+By default, F<~/.wish> is used.
+
+=item B<-h>, B<--help>
+
+Display a brief help.
+
+=back
+
+=head1 SEE ALSO
+
+L<wdic(1)>, L<spawn-fcgi(1)>.
+
+=cut
+
 use strict;
 use warnings;
 use utf8;

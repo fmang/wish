@@ -1,33 +1,31 @@
 @import 'flexbox';
 
-/* Colors: Amazing Brain III by Penina
- * http://www.colourlovers.com/palette/1235117/Amazing_Brain_III
+/* Colors: Partnership by cantc
+ * http://www.colourlovers.com/palette/2085059/Partnership
  */
 
-$high1: #EB1E25; /* red */
-$high2: #F89321; /* orange */
-$white1: #FFFFFF;
-$dead1: #909D55; /* kaki */
-$high3: #0E85D5; /* blue */
+$c_background: #F7F7F7;
+$c_dead: #C9D1D3; /* grey */
+$c_title: #0E68C9; /* blue */
+$c_foreground: #3B3737;
+$c_highlight: #991818; /* dark red */
 
-$background: $white1;
-$foreground: #000000;
+$c_white: #FFFFFF;
 
 body {
 	margin: 0;
-	background: $background;
-	color: $foreground;
+	background: $c_background;
+	color: $c_foreground;
 }
 
 #header {
 	padding: 5px;
-	background: $white1;
 	@include flexbox;
 
 	input {
-		color: $dead1;
-		border: 1px solid $dead1;
-		background: $white1;
+		color: $c_foreground;
+		background: $c_white;
+		border: 1px solid $c_dead;
 		font-size: 1.2em;
 		padding: 5px 10px;
 		margin: 5px;
@@ -38,9 +36,9 @@ body {
 }
 
 h2 {
-	color: $high3;
+	color: $c_title;
 }
 
 b {
-	color: $high1;
+	color: $c_highlight;
 }

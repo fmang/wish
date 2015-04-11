@@ -198,7 +198,7 @@ EOF
 			kanji_entry($_) for @ks;
 
 			print "<h3>Words</h3>\n";
-			my $hl = quotemeta($q);
+			my $hl = escapeHTML(quotemeta($q));
 			my @words = $edict->search($q);
 			word_entry($_, $hl) for @words;
 			if ($q =~ /\p{Han}/) {

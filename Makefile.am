@@ -11,6 +11,7 @@ dist_pmwish_DATA = \
 
 staticdir = $(pkgdatadir)/static
 dist_static_DATA = \
+	static/_flexbox.scss \
 	static/wish.css \
 	static/wish.scss
 

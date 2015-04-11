@@ -170,13 +170,19 @@ sub search_page {
 	my $escaped_q = escapeHTML($q);
 	my $title = $q ? "$escaped_q - Wish" : "Wish";
 	print <<"EOF";
+<!doctype html>
 <html>
 	<head>
 		<title>$title</title>
+		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="static/wish.css" />
 	</head>
 	<body>
-		<h1>Wish</h1>
+		<form id="header">
+			<h1>Wish</h1>
+			<input type="text" name="q" placeholder="Search…" />
+			<input type="submit" value="検索" />
+		</form>
 		<h2>$escaped_q</h2>
 EOF
 	if ($q) {

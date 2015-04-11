@@ -1,0 +1,25 @@
+@import 'flexbox';
+
+body {
+	margin: 0;
+}
+
+#header {
+	padding: 5px;
+	background: lightgrey;
+	border-bottom: 1px solid black;
+	@include flexbox;
+
+	h1, input {
+		margin: 5px;
+	}
+	h1 {
+		font-size: 2em;
+	}
+	input {
+		font-size: 1.2em;
+	}
+	input[type=text] {
+		@include flex(auto);
+	}
+}

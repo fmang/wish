@@ -4,13 +4,18 @@
  * http://www.colourlovers.com/palette/2085059/Partnership
  */
 
-$c_background: #F7F7F7;
-$c_dead: #C9D1D3; /* grey */
-$c_title: #0E68C9; /* blue */
-$c_foreground: #3B3737;
-$c_highlight: #991818; /* dark red */
+$c_light: #F7F7F7;
+$c_grey: #C9D1D3;
+$c_blue: #0E68C9;
+$c_dark: #3B3737;
+$c_darkred: #991818;
 
-$c_white: #FFFFFF;
+$c_background: $c_light;
+$c_foreground: $c_dark;
+$c_lighter: #FFFFFF;
+$c_dead: $c_grey;
+$c_title: $c_blue;
+$c_highlight: $c_darkred;
 
 body {
 	margin: 0;
@@ -24,7 +29,7 @@ body {
 
 	input {
 		color: $c_foreground;
-		background: $c_white;
+		background: $c_lighter;
 		border: 1px solid $c_dead;
 		font-size: 1.2em;
 		padding: 5px 10px;

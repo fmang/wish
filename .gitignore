@@ -6,9 +6,12 @@
 blib/
 _build/
 Build
+cover_db/
 MANIFEST.SKIP.bak
 MYMETA.json
 MYMETA.yml
+nytprof.out
+nytprof/
 
 aclocal.m4
 autom4te.cache/
@@ -24,4 +27,7 @@ wdic
 wdic.1
 wish.fcgi
 wish.fcgi.8
+
+.sass-cache/
 static/wish.css
+static/wish.css.map

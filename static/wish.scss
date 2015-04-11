@@ -1,25 +1,46 @@
 @import 'flexbox';
 
+/* Colors: Amazing Brain III by Penina
+ * http://www.colourlovers.com/palette/1235117/Amazing_Brain_III
+ */
+
+$high1: #EB1E25; /* red */
+$high2: #F89321; /* orange */
+$white1: #FFFFFF;
+$dead1: #909D55; /* kaki */
+$high3: #0E85D5; /* blue */
+
+$background: $white1;
+$foreground: #000000;
+
 body {
 	margin: 0;
+	background: $background;
+	color: $foreground;
 }
 
 #header {
 	padding: 5px;
-	background: lightgrey;
-	border-bottom: 1px solid black;
+	background: $white1;
 	@include flexbox;
 
-	h1, input {
-		margin: 5px;
-	}
-	h1 {
-		font-size: 2em;
-	}
 	input {
+		color: $dead1;
+		border: 1px solid $dead1;
+		background: $white1;
 		font-size: 1.2em;
+		padding: 5px 10px;
+		margin: 5px;
 	}
 	input[type=text] {
 		@include flex(auto);
 	}
+}
+
+h2 {
+	color: $high3;
+}
+
+b {
+	color: $high1;
 }

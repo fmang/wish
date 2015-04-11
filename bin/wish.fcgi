@@ -179,7 +179,6 @@ sub search_page {
 	</head>
 	<body>
 		<form id="header">
-			<h1>Wish</h1>
 			<input type="text" name="q" placeholder="Search…" />
 			<input type="submit" value="検索" />
 		</form>

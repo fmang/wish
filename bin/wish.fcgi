@@ -173,6 +173,7 @@ sub search_page {
 <html>
 	<head>
 		<title>$title</title>
+		<link rel="stylesheet" type="text/css" href="static/wish.css" />
 	</head>
 	<body>
 		<h1>Wish</h1>

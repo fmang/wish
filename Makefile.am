@@ -9,6 +9,11 @@ dist_pmwish_DATA = \
 	lib/Wish/KanjiDic.pm \
 	lib/Wish/Unicode.pm
 
+staticdir = $(pkgdatadir)/static
+dist_static_DATA = \
+	static/wish.css \
+	static/wish.scss
+
 edit = sed -e "s/VERSION = '[^']*'/VERSION = '$(VERSION)'/" \
            -e "2 a use lib '$(pmdir)';\n"
 
@@ -24,6 +29,9 @@ wish.fcgi: bin/wish.fcgi Makefile
 wish.fcgi.8: bin/wish.fcgi
 	pod2man --section 8 $< > $@
 
+%.css: %.scss
+	sass $< $@
+
 CPAN_FILES = MANIFEST Build.PL
 EXTRA_DIST = bin/wdic bin/wish.fcgi t $(CPAN_FILES)
-CLEANFILES = wdic wdic.1 wish.fcgi wish.fcgi.8
+CLEANFILES = wdic wdic.1 wish.fcgi wish.fcgi.8 static/wish.css

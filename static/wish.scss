@@ -25,7 +25,7 @@ body {
 }
 
 #header {
-	padding: 5px;
+	margin: 5px;
 	@include flexbox;
 
 	input {
@@ -42,12 +42,15 @@ body {
 }
 
 #main {
-	padding: 0 10px;
+	margin: 0 10px;
 }
 
 h2 {
+	margin: 10px 0;
+	padding: 5px;
 	font-size: 1.5em;
 	color: $c_title;
+	border-bottom: 1px solid $c_dead;
 }
 
 b {
@@ -58,8 +61,25 @@ a {
 	color: $c_link;
 }
 
-.skip a {
-	text-decoration: none;
-	font-size: 1.3em;
-	padding: 3px;
+.skip {
+	font-size: 1.4em;
+	padding: 0 5px;
+	a {
+		text-decoration: none;
+		padding: 2px;
+	}
+}
+
+.results {
+	@include flexbox;
+	@include flex-direction(row-reverse);
+	.kanjis {
+		@include flex(1);
+	}
+	.words {
+		@include flex(3);
+	}
+	h3 {
+		display: none;
+	}
 }

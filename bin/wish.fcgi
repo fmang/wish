@@ -164,13 +164,41 @@ sub kanji_entry {
 sub skip_block {
 	my ($q, $kanjis) = @_;
 	my $escaped_q = escapeHTML($q);
-	print "<div class=\"skip\">\n";
 	print "<h2>SKIP $escaped_q</h2>\n";
+	print "<div class=\"skip\">\n";
 	for (@$kanjis) {
 		my $k = escapeHTML($_);
-		print "<a href=\"?q=$k\">$k</a>";
+		print "<a href=\"?q=$k\">$k</a>\n";
 	}
-	print '</div>';
+	print "</div>\n";
+}
+
+sub results_block {
+	my ($q, $kanjis, $words, $homophones) = @_;
+	my $escaped_q = escapeHTML($q);
+	my $hl = escapeHTML(quotemeta($q));
+
+	print "<h2>$escaped_q</h2>\n";
+	print "<div class=\"results\">\n";
+	if ($kanjis && @$kanjis) {
+		print "<div class=\"kanjis\">\n";
+		print "<h3>Kanji</h3>\n";
+		kanji_entry($_) for @$kanjis;
+		print "</div>\n";
+	}
+	print "<div class=\"words\">\n";
+	print "<h3>Words</h3>\n";
+	if ($words && @$words) {
+		word_entry($_, $hl) for @$words;
+	} else {
+		print "<span class=\"nothing\">No words.</span>\n";
+	}
+	if ($homophones && @$homophones) {
+		print "<h3>Homophones</h3>\n";
+		word_entry($_, $hl) for @$homophones;
+	}
+	print "</div>\n"; # .words
+	print "</div>\n"; # .results
 }
 
 ################################################################################
@@ -203,21 +231,10 @@ EOF
 			skip_block($q, \@r);
 
 		} else {
-			my $escaped_q = escapeHTML($q);
-			print "<h2>$escaped_q</h2>";
-			print "<h3>Kanji</h3>\n";
-			my @ks = map { $kanjidic->lookup($_) } sort(kanjis($q));
-			kanji_entry($_) for @ks;
-
-			print "<h3>Words</h3>\n";
-			my $hl = escapeHTML(quotemeta($q));
+			my @kanjis = map { $kanjidic->lookup($_) } sort(kanjis($q));
 			my @words = $edict->search($q);
-			word_entry($_, $hl) for @words;
-			if ($q =~ /\p{Han}/) {
-				print "<h3>Homophones</h3>\n";
-				my @hom = $edict->homophones($q);
-				word_entry($_, $hl) for @hom;
-			}
+			my @homophones = $q =~ /\p{Han}/ ? $edict->homophones($q) : ();
+			results_block($q, \@kanjis, \@words, \@homophones);
 		}
 	}
 

@@ -14,8 +14,9 @@ $c_background: $c_light;
 $c_foreground: $c_dark;
 $c_lighter: #FFFFFF;
 $c_dead: $c_grey;
-$c_title: $c_blue;
+$c_title: $c_foreground;
 $c_highlight: $c_darkred;
+$c_link: $c_blue;
 
 body {
 	margin: 0;
@@ -53,9 +54,12 @@ b {
 	color: $c_highlight;
 }
 
+a {
+	color: $c_link;
+}
+
 .skip a {
 	text-decoration: none;
-	color: $c_foreground;
 	font-size: 1.3em;
 	padding: 3px;
 }

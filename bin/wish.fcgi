@@ -163,7 +163,7 @@ sub readings {
 	. "<td><b>$title</b></td>\n"
 	. '<td>' . join(', ', map {
 		$_ = escapeHTML($_);
-		$field == 'kun' and s{\.(.*)$}{<span class="okurigana">&middot;$1</span>};
+		$field eq 'kun' and s{\.(.*)$}{<span class="okurigana">&middot;$1</span>};
 		$_
 	} @{$k->{$field}}) . "</td>\n"
 	. "</tr>\n";

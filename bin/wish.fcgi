@@ -190,8 +190,8 @@ sub search_page {
 	</head>
 	<body>
 		<form id="header">
-			<input type="text" name="q" placeholder="Search…" />
-			<input type="submit" value="検索" />
+			<input type="text" name="q" placeholder="Search&#8230;" />
+			<input type="submit" value="&#x691C;&#x7D22;" />
 		</form>
 		<div id="main">
 EOF

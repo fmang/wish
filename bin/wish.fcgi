@@ -162,7 +162,8 @@ sub kanji_entry {
 }
 
 sub skip_block {
-	my ($escaped_q, $kanjis) = @_;
+	my ($q, $kanjis) = @_;
+	my $escaped_q = escapeHTML($q);
 	print "<div class=\"skip\">\n";
 	print "<h2>SKIP $escaped_q</h2>\n";
 	for (@$kanjis) {
@@ -176,10 +177,9 @@ sub skip_block {
 
 sub search_page {
 	print header(-type => 'text/html', -charset => 'utf-8');
-	my $q = param('q');
-	$q = $q ? decode utf8 => $q : '';
-	my $escaped_q = escapeHTML($q);
-	my $title = $q ? "$escaped_q - Wish" : "Wish";
+	my $q_arg = param('q');
+	my @qs = $q_arg ? split(/[ ,;]+/, decode('utf8', $q_arg)) : ();
+	my $title = @qs ? escapeHTML(join(', ', @qs)) . ' - Wish' : 'Wish';
 	print <<"EOF";
 <!doctype html>
 <html>
@@ -195,14 +195,15 @@ sub search_page {
 		</form>
 		<div id="main">
 EOF
-	if ($q) {
+	for my $q (@qs) {
 
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
 			my @r = $kanjidic->skip_lookup($q);
 			@r = sort(@r);
-			skip_block($escaped_q, \@r);
+			skip_block($q, \@r);
 
 		} else {
+			my $escaped_q = escapeHTML($q);
 			print "<h2>$escaped_q</h2>";
 			print "<h3>Kanji</h3>\n";
 			my @ks = map { $kanjidic->lookup($_) } sort(kanjis($q));

@@ -40,10 +40,22 @@ body {
 	}
 }
 
+#main {
+	padding: 0 10px;
+}
+
 h2 {
+	font-size: 1.5em;
 	color: $c_title;
 }
 
 b {
 	color: $c_highlight;
+}
+
+.skip a {
+	text-decoration: none;
+	color: $c_foreground;
+	font-size: 1.3em;
+	padding: 3px;
 }

@@ -161,6 +161,17 @@ sub kanji_entry {
 	print "</div>\n";
 }
 
+sub skip_block {
+	my ($escaped_q, $kanjis) = @_;
+	print "<div class=\"skip\">\n";
+	print "<h2>SKIP $escaped_q</h2>\n";
+	for (@$kanjis) {
+		my $k = escapeHTML($_);
+		print "<a href=\"?q=$k\">$k</a>";
+	}
+	print '</div>';
+}
+
 ################################################################################
 
 sub search_page {
@@ -182,16 +193,17 @@ sub search_page {
 			<input type="text" name="q" placeholder="Search…" />
 			<input type="submit" value="検索" />
 		</form>
-		<h2>$escaped_q</h2>
+		<div id="main">
 EOF
 	if ($q) {
 
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
-			print "<h3>SKIP Lookup</h3>\n";
-			my @r = sort($kanjidic->skip_lookup($q));
-			html_list(@r);
+			my @r = $kanjidic->skip_lookup($q);
+			@r = sort(@r);
+			skip_block($escaped_q, \@r);
 
 		} else {
+			print "<h2>$escaped_q</h2>";
 			print "<h3>Kanji</h3>\n";
 			my @ks = map { $kanjidic->lookup($_) } sort(kanjis($q));
 			kanji_entry($_) for @ks;
@@ -209,6 +221,7 @@ EOF
 	}
 
 	print <<EOF;
+		</div>
 	</body>
 </html>
 EOF

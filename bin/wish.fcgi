@@ -128,20 +128,43 @@ sub hl_list {
 	print "</ul>\n";
 }
 
+sub inline {
+	my $hl = shift;
+	join ', ' => map {
+		$_ = escapeHTML($_);
+		s{($hl)}{<b>$1</b>}g;
+		s{(\([^()]*\))}{<i>$1</i>}g;
+		$_
+	} @_;
+}
+
 sub word_entry {
 	my ($e, $hl) = @_;
 	print "<div class=\"entry\">\n";
+
 	my $w = $e->{words} || $e->{readings};
-	print '<h4>' . join(' / ', map { escapeHTML($_) =~ s{($hl)}{<b>$1</b>}gr } @$w) . "</h4>\n";
+	print '<span class="heading">' . inline($hl, @$w) . "</span>\n";
 
-	print "<h5>Readings</h5>";
-	$e->{readings} and hl_list($hl, @{$e->{readings}});
-	print "<h5>Meanings</h5>";
-	$e->{meanings} and hl_list($hl, @{$e->{meanings}});
-	print "<h5>Part-of-speech</h5>\n";
-	$e->{pos} and hl_list($hl, @{$e->{pos}});
+	if ($e->{readings}) {
+		print '<span class="readings">['
+		    . inline($hl, @{$e->{readings}})
+		    . "]</span>\n";
+	}
 
-	print "</div>\n";
+	if ($e->{pos}) {
+		print '<span class="pos">'
+		    . escapeHTML(join(', ', sort(@{$e->{pos}})))
+		    . "</span>\n";
+	}
+
+	if ($e->{meanings}) {
+		my $single = @{$e->{meanings}} > 1 ? '' : ' single';
+		print "<ol class=\"meanings$single\">";
+		print '<li>' . escapeHTML($_) . "</li>\n" for @{$e->{meanings}};
+		print "</ol>\n";
+	}
+
+	print "</div>\n"; # .entry
 }
 
 sub kanji_entry {
@@ -191,7 +214,7 @@ sub results_block {
 	if ($words && @$words) {
 		word_entry($_, $hl) for @$words;
 	} else {
-		print "<span class=\"nothing\">No words.</span>\n";
+		print "<div class=\"nothing\">No words.</div>\n";
 	}
 	if ($homophones && @$homophones) {
 		print "<h3>Homophones</h3>\n";

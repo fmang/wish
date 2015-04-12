@@ -48,13 +48,9 @@ body {
 h2 {
 	margin: 10px 0;
 	padding: 5px;
-	font-size: 1.5em;
+	font-size: 1.4em;
 	color: $c_title;
 	border-bottom: 1px solid $c_dead;
-}
-
-b {
-	color: $c_highlight;
 }
 
 a {
@@ -81,5 +77,39 @@ a {
 	}
 	h3 {
 		display: none;
+	}
+}
+
+.words {
+	.nothing {
+		margin: 5px;
+		color: $c_dead;
+	}
+}
+
+.single {
+	list-style: none;
+}
+
+.entry {
+	margin: 10px 5px;
+	font-size: 0.9em;
+	.heading {
+		font-size: 1.3em;
+	}
+	.pos {
+		font-style: italic;
+		font-size: 0.9em;
+	}
+	.meanings {
+		margin: 5px;
+		padding-left: 30px;
+	}
+	b {
+		color: $c_highlight;
+	}
+	i {
+		color: $c_dead;
+		font-size: 0.9em;
 	}
 }

@@ -14,6 +14,7 @@ $c_background: $c_light;
 $c_foreground: $c_dark;
 $c_lighter: #FFFFFF;
 $c_dead: $c_grey;
+$c_mid: #A0A0A0;
 $c_title: $c_foreground;
 $c_highlight: $c_darkred;
 $c_link: $c_blue;
@@ -87,7 +88,11 @@ a {
 	}
 }
 
-.single {
+ol.empty {
+	display: none;
+}
+
+ol.single {
 	list-style: none;
 }
 
@@ -107,9 +112,41 @@ a {
 	}
 	b {
 		color: $c_highlight;
+		font-weight: normal;
 	}
 	i {
 		color: $c_dead;
 		font-size: 0.9em;
+	}
+}
+
+.kanji {
+	margin: 5px 0;
+	@include flexbox;
+	.heading {
+		display: block;
+		font-size: 2em;
+		@include flex(none);
+	}
+	.readings {
+		display: block;
+		/* for some reason, when setting display: table
+		 * webkit doesn't apply margins properly */
+		margin: 0 7px;
+		line-height: 1.5em;
+		td {
+			padding: 2px;
+			vertical-align: top;
+		}
+		b {
+			font-weight: normal;
+			font-size: 0.9em;
+			padding: 2px;
+			border: 1px solid $c_dark;
+			border-radius: 20%;
+		}
+		.okurigana {
+			color: $c_mid;
+		}
 	}
 }

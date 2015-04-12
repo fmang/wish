@@ -113,26 +113,19 @@ while (new CGI::Fast) {
 # HTML generation
 
 sub html_list {
-	print "<ul>\n";
+	my $class = shift;
+	@_ == 0 and $class .= ' empty';
+	@_ == 1 and $class .= ' single';
+	print "<ol class=\"$class\">\n";
 	print '<li>' . escapeHTML($_) . "</li>\n" for @_;
-	print "</ul>\n";
-}
-
-sub hl_list {
-	my $hl = shift;
-	print "<ul>\n";
-	for (@_) {
-		my $li = escapeHTML($_) =~ s{($hl)}{<b>$1</b>}gr;
-		print "<li>$li</li>\n";
-	}
-	print "</ul>\n";
+	print "</ol>\n";
 }
 
 sub inline {
 	my $hl = shift;
 	join ', ' => map {
 		$_ = escapeHTML($_);
-		s{($hl)}{<b>$1</b>}g;
+		$hl and s{($hl)}{<b>$1</b>}g;
 		s{(\([^()]*\))}{<i>$1</i>}g;
 		$_
 	} @_;
@@ -157,31 +150,38 @@ sub word_entry {
 		    . "</span>\n";
 	}
 
-	if ($e->{meanings}) {
-		my $single = @{$e->{meanings}} > 1 ? '' : ' single';
-		print "<ol class=\"meanings$single\">";
-		print '<li>' . escapeHTML($_) . "</li>\n" for @{$e->{meanings}};
-		print "</ol>\n";
-	}
+	$e->{meanings} and html_list('meanings', @{$e->{meanings}});
 
 	print "</div>\n"; # .entry
+}
+
+sub readings {
+	my ($k, $field, $title) = @_;
+	$k->{$field} && @{$k->{$field}} or return;
+	print
+	"<tr class=\"$field\">\n"
+	. "<td><b>$title</b></td>\n"
+	. '<td>' . join(', ', map {
+		$_ = escapeHTML($_);
+		$field == 'kun' and s{\.(.*)$}{<span class="okurigana">&middot;$1</span>};
+		$_
+	} @{$k->{$field}}) . "</td>\n"
+	. "</tr>\n";
 }
 
 sub kanji_entry {
 	my $k = shift;
 	print "<div class=\"kanji\">\n";
-	print "<h4>" . escapeHTML($k->{kanji}) . "</h4>\n";
+	print '<div class="heading">' . escapeHTML($k->{kanji}) . "</div>\n";
 
-	print "<h5>On Readings</h5>\n";
-	$k->{on} and html_list(@{$k->{on}});
-	print "<h5>Kun Readings</h5>\n";
-	$k->{kun} and html_list(@{$k->{kun}});
-	print "<h5>Nanori</h5>\n";
-	$k->{nanori} and html_list(@{$k->{nanori}});
-	print "<h5>Meanings</h5>\n";
-	$k->{english} and html_list(@{$k->{english}});
+	print "<table class=\"readings\">\n";
+	readings($k, on => '&#x97F3;');
+	readings($k, kun => '&#x8A13;');
+	readings($k, nanori => '&#x540D;');
+	readings($k, english => '&#x82F1;'); # well, not really readings but eh
+	print "</table>\n";
 
-	print "</div>\n";
+	print "</div>\n"; # .kanji
 }
 
 sub skip_block {

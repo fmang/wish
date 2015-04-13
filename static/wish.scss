@@ -69,13 +69,13 @@ h2 {
 
 a {
 	color: $c_link;
+	text-decoration: none;
 }
 
 .skip {
 	font-size: 1.4em;
 	padding: 0 5px;
 	a {
-		text-decoration: none;
 		padding: 2px;
 	}
 }

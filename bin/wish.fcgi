@@ -259,6 +259,7 @@ sub word_entry {
 	$e->{meanings} and html_list('meanings', map {
 		$_ = escapeHTML($_);
 		s@([\({])([a-zA-Z\-]+)([\)}])@$1.marker($2).$3@eg;
+		s@\(See ([^\)]+)\)@'(See <a href="?q='.$1.'">'.$1.'</a>)'@eg;
 		$_
 	} @{$e->{meanings}});
 

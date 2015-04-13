@@ -174,11 +174,11 @@ ol.single {
 	font-size: 0.9em;
 	.heading {
 		font-size: 1.3em;
-		.marker {
-			color: $c_mid;
-			font-size: 0.7em;
-			padding-left: 3px;
-		}
+	}
+	.heading .marker, .readings .marker {
+		color: $c_mid;
+		font-size: 0.7em;
+		padding-left: 3px;
 	}
 	.pos {
 		font-style: italic;
@@ -228,7 +228,7 @@ ol.single {
 
 /* Cool guide at:
  * http://www.webdesignerdepot.com/2012/11/how-to-create-a-simple-css3-tooltip/ */
-.marker {
+.marker[alt] {
 	position: relative;
 	$tooltip_pos: 1.3em;
 	$arrow_size: 0.5em;

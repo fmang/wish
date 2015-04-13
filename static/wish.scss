@@ -81,7 +81,7 @@ a {
 $column-width: 300px;
 
 @mixin entry-columns($cols) {
-	@media (min-width: $cols * $column-width) {
+	@media screen and (min-width: $cols * $column-width) {
 		.words {
 			@include css3-prefix(columns, $cols);
 		}
@@ -114,15 +114,16 @@ $column-width: 300px;
 	.words {
 		@include flex(2);
 	}
-	@media (max-width: 2 * $column-width) {
+	@media print, (max-width: 2 * $column-width) {
 		/* display kanjis at the top */
-		@include flex-direction(column);
+		@include css3-prefix(display, block);
 		.kanjis {
 			@include flexbox;
 			@include flex-flow(row wrap);
 			margin: 0 5px;
 		}
 		.kanjis .kanji {
+			font-size: 0.9em;
 			width: 40%;
 			@include flex(auto);
 		}
@@ -132,7 +133,7 @@ $column-width: 300px;
 			margin: 10px 5px;
 		}
 	}
-	@media (max-width: 1.4 * $column-width) {
+	@media screen and (max-width: 1.4 * $column-width) {
 		.kanjis .kanji {
 			width: auto;
 		}
@@ -165,6 +166,7 @@ ol.single {
 }
 
 .entry {
+	@include css3-prefix(column-break-inside, avoid);
 	margin: 10px 5px;
 	font-size: 0.9em;
 	.heading {
@@ -216,5 +218,14 @@ ol.single {
 		.okurigana {
 			color: $c_mid;
 		}
+	}
+}
+
+@media print {
+	body {
+		background: white;
+	}
+	form#header {
+		display: none;
 	}
 }

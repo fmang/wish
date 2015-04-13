@@ -217,7 +217,7 @@ sub results_block {
 		print "<div class=\"nothing\">No words.</div>\n";
 	}
 	if ($homophones && @$homophones) {
-		print "<h3>Homophones</h3>\n";
+		print "<h4>Homophones</h4>\n";
 		word_entry($_, $hl) for @$homophones;
 	}
 	print "</div>\n"; # .words

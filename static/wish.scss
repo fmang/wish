@@ -79,8 +79,13 @@ a {
 .results {
 	@include flexbox;
 	@include flex-direction(row-reverse);
+	margin: 10px 0;
 	h3 {
 		display: none;
+	}
+	h4 {
+		font-size: 1.1em;
+		margin: 10px 5px;
 	}
 
 	/* default 2-column layout */

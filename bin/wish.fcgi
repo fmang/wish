@@ -97,20 +97,69 @@ my $edict = Wish::Edict2->new($dbdir);
 
 $kanjidic && $edict or die("Couldn't open the dictionary database at $dbdir: $!.\n");
 
-while (new CGI::Fast) {
-	my $url = url(-absolute => 1);
-	if ($url eq '/') {
-		print redirect('/search');
-	} elsif ($url eq '/search') {
-		search_page();
-	} else {
-		print header('text/plain', '404 Not Found');
-		print "404 Not Found\n";
-	}
-}
-
 ################################################################################
 # HTML generation
+
+my %pos_markers = (
+	# already HTML-escaped, since we won't use it in any other context
+	'adj-i' => 'Adjective (keiyoushi)',
+	'adj-na' => 'Adjectival nouns or quasi-adjectives (keiyodoshi)',
+	'adj-no' => 'Nouns which may take the genitive case particle &lsquo;no&rsquo;',
+	'adj-pn' => 'Pre-noun adjectival (rentaishi)',
+	'adj-t' => '&lsquo;taru&rsquo; adjective',
+	'adj-f' => 'Noun or verb acting prenominally',
+	'adj' => 'Adjective', # former adjective classification (being removed)
+	'adv' => 'Adverb (fukushi)',
+	'adv-n' => 'Adverbial noun',
+	'adv-to' => 'Adverb taking the &lsquo;to&rsquo; particle',
+	'aux' => 'Auxiliary',
+	'aux-v' => 'Auxiliary verb',
+	'aux-adj' => 'Auxiliary adjective',
+	'conj' => 'Conjunction',
+	'ctr' => 'Counter',
+	'exp' => 'Expressions (phrases, clauses, etc.)',
+	'int' => 'Interjection (kandoushi)',
+	'iv' => 'Irregular verb',
+	'n' => 'Noun (futsuumeishi)',
+	'n-adv' => 'Adverbial noun (fukushitekimeishi)',
+	'n-pref' => 'Noun, used as a prefix',
+	'n-suf' => 'Noun, used as a suffix',
+	'n-t' => 'Noun (temporal) (jisoumeishi)',
+	'num' => 'Numeric',
+	'pn' => 'Pronoun',
+	'pref' => 'Prefix',
+	'prt' => 'Particle',
+	'suf' => 'Suffix',
+	'v1' => 'Ichidan verb',
+	'v2a-s' => 'Nidan verb with &lsquo;u &rsquo;ending (archaic)',
+	'v4h' => 'Yodan verb with &lsquo;hu/fu&rsquo; ending (archaic)',
+	'v4r' => 'Yodan verb with &lsquo;ru&rsquo; ending (archaic)',
+	'v5' => 'Godan verb (not completely classified)',
+	'v5aru' => 'Godan verb - -aru special class',
+	'v5b' => 'Godan verb with &lsquo;bu&rsquo; ending',
+	'v5g' => 'Godan verb with &lsquo;gu&rsquo; ending',
+	'v5k' => 'Godan verb with &lsquo;ku&rsquo; ending',
+	'v5k-s' => 'Godan verb - iku/yuku special class',
+	'v5m' => 'Godan verb with &lsquo;mu&rsquo; ending',
+	'v5n' => 'Godan verb with &lsquo;nu&rsquo; ending',
+	'v5r' => 'Godan verb with &lsquo;ru&rsquo; ending',
+	'v5r-i' => 'Godan verb with &lsquo;ru&rsquo; ending (irregular verb)',
+	'v5s' => 'Godan verb with &lsquo;su&rsquo; ending',
+	'v5t' => 'Godan verb with &lsquo;tsu&rsquo; ending',
+	'v5u' => 'Godan verb with &lsquo;u&rsquo; ending',
+	'v5u-s' => 'Godan verb with &lsquo;u&rsquo; ending (special class)',
+	'v5uru' => 'Godan verb - uru old class verb (old form of Eru)',
+	'v5z' => 'Godan verb with &lsquo;zu&rsquo; ending',
+	'vz' => 'Ichidan verb - zuru verb - (alternative form of -jiru verbs)',
+	'vi' => 'Intransitive verb',
+	'vk' => 'Kuru verb - special class',
+	'vn' => 'Irregular nu verb',
+	'vs' => 'Noun or participle which takes the aux. verb suru',
+	'vs-c' => 'su verb - precursor to the modern suru',
+	'vs-i' => 'suru verb - irregular',
+	'vs-s' => 'suru verb - special class',
+	'vt' => 'Transitive verb',
+);
 
 sub html_list {
 	my $class = shift;
@@ -146,8 +195,11 @@ sub word_entry {
 
 	if ($e->{pos}) {
 		print '<span class="pos">'
-		    . escapeHTML(join(', ', sort(@{$e->{pos}})))
-		    . "</span>\n";
+		. join(', ', map {
+			my $tooltip = $pos_markers{$_} || "";
+			"<span title=\"$tooltip\">$_</span>"
+		} sort(@{$e->{pos}}))
+		. "</span>\n";
 	}
 
 	$e->{meanings} and html_list('meanings', @{$e->{meanings}});
@@ -266,4 +318,16 @@ EOF
 	</body>
 </html>
 EOF
+}
+
+while (new CGI::Fast) {
+	my $url = url(-absolute => 1);
+	if ($url eq '/') {
+		print redirect('/search');
+	} elsif ($url eq '/search') {
+		search_page();
+	} else {
+		print header('text/plain', '404 Not Found');
+		print "404 Not Found\n";
+	}
 }

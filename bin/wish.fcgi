@@ -100,8 +100,8 @@ $kanjidic && $edict or die("Couldn't open the dictionary database at $dbdir: $!.
 ################################################################################
 # HTML generation
 
-my %pos_markers = (
-	# already HTML-escaped, since we won't use it in any other context
+my %markers = (
+	# Part of speech
 	'adj-i' => 'Adjective (keiyoushi)',
 	'adj-na' => 'Adjectival nouns or quasi-adjectives (keiyodoshi)',
 	'adj-no' => 'Nouns which may take the genitive case particle &lsquo;no&rsquo;',
@@ -159,6 +159,56 @@ my %pos_markers = (
 	'vs-i' => 'suru verb - irregular',
 	'vs-s' => 'suru verb - special class',
 	'vt' => 'Transitive verb',
+
+	# Field of application
+	'Buddh' => 'Buddhist term',
+	'MA' => 'Martial arts term',
+	'comp' => 'Computer terminology',
+	'food' => 'Food term',
+	'geom' => 'Geometry term',
+	'gram' => 'Grammatical term',
+	'ling' => 'Linguistics terminology',
+	'math' => 'Mathematics',
+	'mil' => 'Military',
+	'physics' => 'Physics terminology',
+	'biol' => 'Biology',
+
+	# Misc
+	'X' => 'Rude or X-rated term',
+	'abbr' => 'Abbreviation',
+	'arch' => 'Archaism',
+	'ateji' => 'Ateji (phonetic) reading',
+	'chn' => 'Children&apos;s language',
+	'col' => 'Colloquialism',
+	'derog' => 'Derogatory term',
+	'eK' => 'Exclusively kanji',
+	'ek' => 'Exclusively kana',
+	'fam' => 'Familiar language',
+	'fem' => 'Female term or language',
+	'gikun' => 'Gikun (meaning) reading',
+	'hon' => 'Honorific or respectful (sonkeigo) language',
+	'hum' => 'Humble (kenjougo) language',
+	'ik' => 'Word containing irregular kana usage',
+	'iK' => 'Word containing irregular kanji usage',
+	'id' => 'Idiomatic expression',
+	'io' => 'Irregular okurigana usage',
+	'm-sl' => 'Manga slang',
+	'male' => 'Male term or language',
+	'male-sl' => 'Male slang',
+	'oK' => 'Word containing out-dated kanji',
+	'obs' => 'Obsolete term',
+	'obsc' => 'Obscure term',
+	'ok' => 'Out-dated or obsolete kana usage',
+	'on-mim' => 'Onomatopoeic or mimetic word',
+	'poet' => 'Poetical term',
+	'pol' => 'Polite (teineigo) language',
+	'rare' => 'Rare (now replaced by "obsc")',
+	'sens' => 'Sensitive word',
+	'sl' => 'Slang',
+	'uK' => 'Word usually written using kanji alone',
+	'uk' => 'Word usually written using kana alone',
+	'vulg' => 'Vulgar expression or word',
+	'P' => 'Common',
 );
 
 sub html_list {
@@ -166,7 +216,7 @@ sub html_list {
 	@_ == 0 and $class .= ' empty';
 	@_ == 1 and $class .= ' single';
 	print "<ol class=\"$class\">\n";
-	print '<li>' . escapeHTML($_) . "</li>\n" for @_;
+	print "<li>$_</li>\n" for @_;
 	print "</ol>\n";
 }
 
@@ -175,9 +225,16 @@ sub inline {
 	join ', ' => map {
 		$_ = escapeHTML($_);
 		$hl and s{($hl)}{<b>$1</b>}g;
-		s{(\([^()]*\))}{<i>$1</i>}g;
+		s{\(([^()]*)\)}{marker($1)}eg;
 		$_
 	} @_;
+}
+
+sub marker {
+	my $m = shift;
+	my $tooltip = $markers{$m};
+	$tooltip = " title=\"$tooltip\"" if $tooltip;
+	"<span class=\"marker\"$tooltip>$m</span>"
 }
 
 sub word_entry {
@@ -195,14 +252,15 @@ sub word_entry {
 
 	if ($e->{pos}) {
 		print '<span class="pos">'
-		. join(', ', map {
-			my $tooltip = $pos_markers{$_} || "";
-			"<span title=\"$tooltip\">$_</span>"
-		} sort(@{$e->{pos}}))
+		. join(', ', map { marker($_) } sort(@{$e->{pos}}))
 		. "</span>\n";
 	}
 
-	$e->{meanings} and html_list('meanings', @{$e->{meanings}});
+	$e->{meanings} and html_list('meanings', map {
+		$_ = escapeHTML($_);
+		s@([\({])([a-zA-Z\-]+)([\)}])@$1.marker($2).$3@eg;
+		$_
+	} @{$e->{meanings}});
 
 	print "</div>\n"; # .entry
 }

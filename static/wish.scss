@@ -171,6 +171,11 @@ ol.single {
 	font-size: 0.9em;
 	.heading {
 		font-size: 1.3em;
+		.marker {
+			color: $c_mid;
+			font-size: 0.7em;
+			padding-left: 3px;
+		}
 	}
 	.pos {
 		font-style: italic;
@@ -183,10 +188,6 @@ ol.single {
 	b {
 		color: $c_highlight;
 		font-weight: normal;
-	}
-	i {
-		color: $c_dead;
-		font-size: 0.9em;
 	}
 }
 

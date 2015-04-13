@@ -1,5 +1,14 @@
 @import 'flexbox';
 
+@mixin css3-prefix($property, $value) {
+  -webkit-#{$property}: #{$value};
+   -khtml-#{$property}: #{$value};
+     -moz-#{$property}: #{$value};
+      -ms-#{$property}: #{$value};
+       -o-#{$property}: #{$value};
+          #{$property}: #{$value};
+}
+
 /* Colors: Partnership by cantc
  * http://www.colourlovers.com/palette/2085059/Partnership
  */
@@ -70,14 +79,26 @@ a {
 .results {
 	@include flexbox;
 	@include flex-direction(row-reverse);
+	h3 {
+		display: none;
+	}
+
+	/* default 2-column layout */
 	.kanjis {
 		@include flex(1);
 	}
 	.words {
-		@include flex(3);
+		@include flex(2);
 	}
-	h3 {
-		display: none;
+	@media (min-width: 900px) {
+		/* 3-column layout */
+		.words { @include css3-prefix(columns, 3); }
+		.kanjis + .words { @include css3-prefix(columns, 2); @include flex(2); }
+	}
+	@media (min-width: 1200px) {
+		/* 4-column layout */
+		.words { @include css3-prefix(columns, 4); }
+		.kanjis + .words { @include css3-prefix(columns, 3); @include flex(3); }
 	}
 }
 

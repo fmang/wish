@@ -32,6 +32,8 @@ body {
 	margin: 0;
 	background: $c_background;
 	color: $c_foreground;
+	max-width: 3400px;
+	margin: auto;
 }
 
 #header {
@@ -76,10 +78,27 @@ a {
 	}
 }
 
+$column-width: 300px;
+
+@mixin entry-columns($cols) {
+	@media (min-width: $cols * $column-width) {
+		.words {
+			@include css3-prefix(columns, $cols);
+		}
+		.kanjis + .words {
+			@include css3-prefix(columns, $cols - 1);
+			@if $cols > 2 {
+				@include flex($cols - 1);
+			}
+		}
+	}
+}
+
 .results {
 	@include flexbox;
 	@include flex-direction(row-reverse);
 	margin: 10px 0;
+
 	h3 {
 		display: none;
 	}
@@ -88,23 +107,46 @@ a {
 		margin: 10px 5px;
 	}
 
-	/* default 2-column layout */
+	/* default 2-column layout: split 2/3 */
 	.kanjis {
 		@include flex(1);
 	}
 	.words {
 		@include flex(2);
 	}
-	@media (min-width: 900px) {
-		/* 3-column layout */
-		.words { @include css3-prefix(columns, 3); }
-		.kanjis + .words { @include css3-prefix(columns, 2); @include flex(2); }
+	@media (max-width: 2 * $column-width) {
+		/* display kanjis at the top */
+		@include flex-direction(column);
+		.kanjis {
+			@include flexbox;
+			@include flex-flow(row wrap);
+			margin: 0 5px;
+		}
+		.kanjis .kanji {
+			width: 40%;
+			@include flex(auto);
+		}
+		.words h3 {
+			display: block;
+			font-size: 1.2em;
+			margin: 10px 5px;
+		}
 	}
-	@media (min-width: 1200px) {
-		/* 4-column layout */
-		.words { @include css3-prefix(columns, 4); }
-		.kanjis + .words { @include css3-prefix(columns, 3); @include flex(3); }
+	@media (max-width: 1.4 * $column-width) {
+		.kanjis .kanji {
+			width: auto;
+		}
 	}
+	@include entry-columns(2);
+	@include entry-columns(3);
+	@include entry-columns(4);
+	@include entry-columns(5);
+	@include entry-columns(6);
+	@include entry-columns(7);
+	@include entry-columns(8);
+	@include entry-columns(9);
+	/* oughta be fancy having a 4K screen */
+	/* SO MUCH DATA */
 }
 
 .words {

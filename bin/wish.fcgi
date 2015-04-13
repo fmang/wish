@@ -233,7 +233,7 @@ sub inline {
 sub marker {
 	my $m = shift;
 	my $tooltip = $markers{$m};
-	$tooltip = " title=\"$tooltip\"" if $tooltip;
+	$tooltip = " alt=\"$tooltip\"" if $tooltip;
 	"<span class=\"marker\"$tooltip>$m</span>"
 }
 

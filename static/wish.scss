@@ -27,6 +27,7 @@ $c_mid: #A0A0A0;
 $c_title: $c_foreground;
 $c_highlight: $c_darkred;
 $c_link: $c_blue;
+$c_tooltip: $c_dead;
 
 body {
 	margin: 0;
@@ -219,6 +220,39 @@ ol.single {
 		.okurigana {
 			color: $c_mid;
 		}
+	}
+}
+
+
+/* Cool guide at:
+ * http://www.webdesignerdepot.com/2012/11/how-to-create-a-simple-css3-tooltip/ */
+.marker {
+	position: relative;
+	$tooltip_pos: 1.3em;
+	$arrow_size: 0.5em;
+	&:hover:after {
+		font-style: normal;
+		content: attr(alt);
+		font-size: 0.8rem;
+		background: $c_tooltip;
+		color: $c_foreground;
+		border-radius: 3px 3px 3px 0;
+		padding: 5px 8px;
+		position: absolute;
+		bottom: $tooltip_pos + $arrow_size;
+		left: 30%;
+		z-index: 98;
+		min-width: 100px;
+	}
+	&:hover:before{
+		content: "";
+		border-style: solid;
+		border-color: $c_dead transparent;
+		border-width: $arrow_size $arrow_size 0 0;
+		position: absolute;
+		bottom: $tooltip_pos;
+		left: 30%;
+		z-index: 99;
 	}
 }
 

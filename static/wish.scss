@@ -114,6 +114,7 @@ $column-width: 300px;
 		@include flex(1);
 	}
 	.words {
+		min-height: 200px;
 		@include flex(2);
 	}
 	@media print, (max-width: 2 * $column-width) {

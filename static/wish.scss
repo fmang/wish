@@ -114,7 +114,6 @@ $column-width: 300px;
 		@include flex(1);
 	}
 	.words {
-		min-height: 200px;
 		@include flex(2);
 	}
 	@media print, (max-width: 2 * $column-width) {
@@ -134,6 +133,7 @@ $column-width: 300px;
 			display: block;
 			font-size: 1.2em;
 			margin: 10px 5px;
+			@include css3-prefix(column-span, all);
 		}
 	}
 	@media screen and (max-width: 1.4 * $column-width) {
@@ -168,13 +168,26 @@ ol.single {
 	list-style: none;
 }
 
+@mixin avoid-break {
+	break-inside: avoid-column;
+	-webkit-column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	-o-column-break-inside: avoid;
+	column-break-inside: avoid;
+	page-break-inside: avoid;
+	/* this is gross, but */
+	display: table;
+}
+
 .entry {
-	@include css3-prefix(column-break-inside, avoid);
-	@include css3-prefix(break-inside, avoid);
-	margin: 10px 5px;
+	@include avoid-break;
+	margin: 3px 5px;
 	font-size: 0.9em;
 	.heading {
 		font-size: 1.3em;
+	}
+	.readings {
+		margin: 0 3px;
 	}
 	.heading .marker, .readings .marker {
 		color: $c_mid;
@@ -196,6 +209,7 @@ ol.single {
 }
 
 .kanji {
+	@include avoid-break;
 	margin: 5px 0;
 	@include flexbox;
 	.heading {

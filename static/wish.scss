@@ -170,6 +170,7 @@ ol.single {
 
 .entry {
 	@include css3-prefix(column-break-inside, avoid);
+	@include css3-prefix(break-inside, avoid);
 	margin: 10px 5px;
 	font-size: 0.9em;
 	.heading {

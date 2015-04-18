@@ -22,14 +22,45 @@ B<wish.fcgi> is its FastCGI interface, also compatible with CGI.
 Databases are created and managed by the B<wdic> tool. See its man page for
 further information.
 
-=head2 About FastCGI
+=head2 Webserver configuration
 
-CGI and FastCGI are standard interfaces for web servers to call programs that
+Wish doesn't require any FastCGI settings but the standard ones. However, the
+webserver has to redirect the F</static> location to the path specified during the
+install.
+
+=head3 About FastCGI
+
+CGI and FastCGI are standard interfaces for webservers to call programs that
 generate dynamic pages. Each web server has its own way to configure these.
-Wish doesn't require any settings but the standard ones.
 
 CGI is highly discouraged as the database would be reloaded every time a page
 is generated. Use FastCGI instead.
+
+=head3 Spawning
+
+Spawning a FastCGI application is done using a tool like B<spawn-fcgi> or
+B<multiwatch>. These tools spawn the FastCGI process and create a socket for
+the webserver to connect to.
+
+The path you choose for the socket is to be specified in the webserver's
+configuration file.
+
+=head3 Nginx
+
+Here's a sample nginx configuration fragment:
+
+    server {
+        listen 80;
+        listen [::]:80; # IPv6
+        charset utf-8;
+        location / {
+            include fastcgi.conf;
+            fastcgi_pass unix:/run/wish/wish.sock; # see the section above
+        }
+        location /static/ {
+            alias /usr/share/wish/static/;
+        }
+    }
 
 =head1 OPTIONS
 
@@ -49,7 +80,7 @@ Display a brief help.
 
 =head1 SEE ALSO
 
-L<wdic(1)>, L<spawn-fcgi(1)>.
+L<wdic(1)>, L<spawn-fcgi(1)>, L<multiwatch(1)>.
 
 =cut
 

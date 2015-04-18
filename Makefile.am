@@ -2,7 +2,7 @@ bin_SCRIPTS = wdic
 pkglibexec_SCRIPTS = wish.fcgi
 dist_man_MANS = wdic.1 wish.fcgi.8
 
-pmdir = $(pkgdatadir)
+pmdir = $(pkgdatadir)/perl
 pmwishdir = $(pmdir)/Wish
 dist_pmwish_DATA = \
 	lib/Wish/Edict2.pm \

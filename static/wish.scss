@@ -186,8 +186,8 @@ ol.single {
 	.heading {
 		font-size: 1.3em;
 	}
-	.readings {
-		margin: 0 3px;
+	.readings, .pos {
+		margin-left: 5px;
 	}
 	.heading .marker, .readings .marker {
 		color: $c_mid;

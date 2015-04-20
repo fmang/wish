@@ -268,6 +268,16 @@ sub marker {
 	"<span class=\"marker\"$tooltip>$m</span>"
 }
 
+sub cross_links {
+	my $out = '';
+	for (split(',', shift)) {
+		my $word = /&#x30FB;/ ? substr($_, 0, $-[0]) : $_;
+		$out and $out .= ", ";
+		$out .= "<a href=\"?q=$word\">$_</a>"
+	}
+	$out
+}
+
 sub word_entry {
 	my ($e, $hl) = @_;
 	print "<div class=\"entry\">\n";
@@ -290,7 +300,7 @@ sub word_entry {
 	$e->{meanings} and html_list('meanings', map {
 		$_ = escapeHTML($_);
 		s@([\({])([a-zA-Z\-]+)([\)}])@$1.marker($2).$3@eg;
-		s@\(See ([^\)]+)\)@'(See <a href="?q='.$1.'">'.$1.'</a>)'@eg;
+		s@\(See ([^\)]+)\)@'(See '.cross_links($1).')'@eg;
 		$_
 	} @{$e->{meanings}});
 

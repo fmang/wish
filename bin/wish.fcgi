@@ -378,11 +378,9 @@ sub results_block {
 
 ################################################################################
 
-sub search_page {
-	print header(-type => 'text/html', -charset => 'utf-8');
-	my $q_arg = param('q');
-	my @qs = $q_arg ? split(/[ ,;]+/, decode('utf8', $q_arg)) : ();
-	my $title = @qs ? escapeHTML(join(', ', @qs)) . ' - Wish' : 'Wish';
+sub page_header {
+	my $title = shift;
+	$title = $title ? escapeHTML($title) . ' - Wish' : 'Wish';
 	print <<"EOF";
 <!doctype html>
 <html>
@@ -399,8 +397,31 @@ sub search_page {
 		</form>
 		<div id="main">
 EOF
-	for my $q (@qs) {
+}
 
+sub page_footer {
+	print <<EOF;
+		</div>
+		<div id="footer">
+			<div><a href="https://github.com/fmang/wish/" title="This project">Wish</a></div>
+			<ul>
+				<li><a href="http://www.csse.monash.edu.au/~jwb/kanjidic.html" title="Free kanji dictionary">KANJIDIC</a></li>
+				<li><a href="http://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a></li>
+				<li><a href="http://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Colors</a></li>
+				<li><a href="http://www.perl.org/" title="Cool programming language">Perl</a></li>
+			</ul>
+		</div>
+	</body>
+</html>
+EOF
+}
+
+sub search_page {
+	print header(-type => 'text/html', -charset => 'utf-8');
+	my $q_arg = param('q');
+	my @qs = $q_arg ? split(/[ ,;]+/, decode('utf8', $q_arg)) : ();
+	page_header(join(', ', @qs));
+	for my $q (@qs) {
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
 			my @r = $kanjidic->skip_lookup($q);
 			@r = sort(@r);
@@ -413,12 +434,7 @@ EOF
 			results_block($q, \@kanjis, \@words, \@homophones);
 		}
 	}
-
-	print <<EOF;
-		</div>
-	</body>
-</html>
-EOF
+	page_footer();
 }
 
 while (new CGI::Fast) {

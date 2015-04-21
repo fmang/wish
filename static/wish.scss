@@ -59,6 +59,32 @@ body {
 	margin: 0 10px;
 }
 
+#footer {
+	margin: 20px 20px;
+	&, & a { color: $c_dead; }
+	a:hover { color: $c_link; }
+	div {
+		text-align: right;
+		margin: 0 5px;
+	}
+	div:before {
+		font-size: 0.9em;
+		content: "⚡ ";
+	}
+	ul {
+		font-size: 0.9em;
+		@include flexbox;
+		@include flex-flow (row wrap);
+		@include justify-content(flex-end);
+		margin: 0;
+		padding: 0;
+		li {
+			margin: 5px;
+			list-style-type: none;
+		}
+	}
+}
+
 h2 {
 	margin: 10px 0;
 	padding: 5px;

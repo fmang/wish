@@ -26,6 +26,7 @@ sub new {
 	$self->opendb('words') or return;
 	$self->opendb('readings') or return;
 	$self->opendb('kindex') or return;
+	$self->opendb('skindex') or return;
 	$self;
 }
 
@@ -59,6 +60,12 @@ sub load {
 		$self->{words}->{to_katakana(clean($_))} = $e->{entl} for @{$e->{words}};
 		$self->{readings}->{to_katakana(clean($_))} = $e->{entl} for @{$e->{readings}};
 		$self->{kindex}->{$_} = $e->{entl} for kanjis(@{$e->{words}});
+		my %sk;
+		for my $w (@{$e->{words}}) {
+			my @kanjis = kanjis($w);
+			@kanjis == 1 and $sk{$kanjis[0]} = undef;
+		}
+		$self->{skindex}->{$_} = $e->{entl} for keys %sk;
 	}
 	close $dic;
 	$self->sync();
@@ -71,6 +78,7 @@ sub sync {
 	$self->{words_db}->sync();
 	$self->{readings_db}->sync();
 	$self->{kindex_db}->sync();
+	$self->{skindex_db}->sync();
 }
 
 sub entl_lookup {
@@ -122,6 +130,13 @@ sub kanji_lookup {
 	$self->entl_lookup(@r);
 }
 
+sub single_kanji_lookup {
+	my ($self, $key) = @_;
+	$key =~ /(\p{Han})/ or return;
+	my @r = $self->{skindex_db}->get_dup($1);
+	$self->entl_lookup(@r)
+}
+
 sub main {
 	my $e = shift;
 	my $w = $e->{words} ? $e->{words}->[0] : $e->{readings}->[0];
@@ -146,13 +161,18 @@ sub highlight_pos {
 
 sub search {
 	my ($self, $q) = @_;
+	my $ks = kanji_count($q);
 	my @results;
-	if ($q =~ /^[\p{Hira}\p{Kana}]+$/) {
+	if ($ks == 0 and $q =~ /^[\p{Hira}\p{Kana}]+$/) {
 		@results = $self->reading_lookup($q);
 		push(@results, sort { main($a) cmp main($b) } $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect
-	} elsif ($q =~ /\p{Han}/) {
-		@results = $self->kanji_lookup($q);
+	} elsif ($ks >= 1) {
+		if ($ks == 1) {
+			@results = $self->single_kanji_lookup($q);
+		} else {
+			@results = $self->kanji_lookup($q);
+		}
 		for (@results) {
 			$_->{main} = main($_);
 			$_->{hl} = highlight_pos($q, $_);

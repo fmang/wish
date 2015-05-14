@@ -299,6 +299,7 @@ sub word_entry {
 
 	$e->{meanings} and html_list('meanings', map {
 		$_ = escapeHTML($_);
+		s@([^ ])/([^ ])@$1 / $2@g;
 		s@([\({])([a-zA-Z\-]+)([\)}])@$1.marker($2).$3@eg;
 		s@\(See ([^\)]+)\)@'(See '.cross_links($1).')'@eg;
 		$_

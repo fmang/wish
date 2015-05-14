@@ -1,6 +1,10 @@
 bin_SCRIPTS = wdic
 pkglibexec_SCRIPTS = wish.fcgi
-dist_man_MANS = wdic.1 wish.fcgi.8
+
+if FOUND_POD2MAN
+  MANPAGES = wdic.1 wish.fcgi.8
+endif
+man_MANS = $(MANPAGES)
 
 pmdir = $(pkgdatadir)/perl
 pmwishdir = $(pmdir)/Wish
@@ -9,10 +13,13 @@ dist_pmwish_DATA = \
 	lib/Wish/KanjiDic.pm \
 	lib/Wish/Unicode.pm
 
+if FOUND_SASS
+  STYLESHEETS = static/wish.css
+endif
 staticdir = $(pkgdatadir)/static
+static_DATA = $(STYLESHEETS)
 dist_static_DATA = \
 	static/_flexbox.scss \
-	static/wish.css \
 	static/wish.scss
 
 edit = sed -e "s/VERSION = '[^']*'/VERSION = '$(VERSION)'/" \

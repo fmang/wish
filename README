@@ -1,10 +1,17 @@
 Wish
 ====
 
-Wish is a Perl tool for looking up words and kanjis from a Japanese word and
-kanji database. The current supported formats are KANJIDIC and EDICT2.
+Wish is a [Perl][p] tool for looking up words and kanjis from a Japanese word and
+kanji database. The current supported formats are [KANJIDIC][kd] and [EDICT2][ed].
 
-A command-line tool, `wdic`, is provided as a front end.
+The command-line tool `wdic` is provided as a front end.
+
+A web interface in also provided as a [FastCGI][fcgi] program, called `wish.fcgi`.
+
+[p]: http://www.perl.org/
+[kd]: http://www.csse.monash.edu.au/~jwb/kanjidic.html
+[ed]: http://www.edrdg.org/jmdict/edict.html
+[fcgi]: http://www.fastcgi.com/
 
 Features
 --------
@@ -21,6 +28,23 @@ Wish search have the following features:
 
 Results are storted in a fashion meant for relevant words to appear first, but
 it's not perfect.
+
+Dependencies
+------------
+
+To use the command-line tool, all you need is a standard [Perl][p] install.
+
+To generated the man pages, `pod2man` from the Perl distribution is required.
+Otherwise, the documentation is written at the top of the executables; don't be
+shy.
+
+If you want to use the web interface, you'll need Perl's `CGI` and `CGI::Fast`
+modules. These are usually included in the standard distribution, but otherwise
+they should be in your distributions repositories under the names `perl-cgi`
+and `perl-cgi-fast`. Then a FastCGI spawner is required in order to start the
+application. A popular choice is [spawn-fcgi][sf].
+
+[sf]: http://redmine.lighttpd.net/projects/spawn-fcgi/wiki
 
 Install
 -------
@@ -51,9 +75,6 @@ Use
 Before Wish can be used, the word database needs to be built using
 [KANJIDIC][kd] and [EDICT2][ed] files.
 
-[kd]: http://www.csse.monash.edu.au/~jwb/kanjidic.html
-[ed]: http://www.edrdg.org/jmdict/edict.html
-
 You can download and load them like this:
 
 	wget http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz
@@ -67,6 +88,15 @@ You can download and load them like this:
 ### Lookup
 
 Lookup can be performed from the command-line, supplying lookup terms as
-arguments, or as a REPL if `wdic` is called without arguments.
+arguments, or in interactive mode if `wdic` is called without arguments.
 
-Check the man page for more information.
+Check the man page `wdic(1)` for more information.
+
+### Web interface
+
+`wish.fcgi` is just your standard FastCGI application.
+
+In order to be pretty, the webserver's `/static` path should be redirected to,
+usually `/usr/share/wish/static`.
+
+Please refer to the man page `wish.fcgi(8)` for details.

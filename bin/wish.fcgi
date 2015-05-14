@@ -264,8 +264,8 @@ sub inline {
 sub marker {
 	my $m = shift;
 	my $tooltip = $markers{$m};
-	$tooltip = " title=\"$tooltip\"" if $tooltip;
-	"<span class=\"marker\"$tooltip>$m</span>"
+	$tooltip and return "<span class=\"marker\" title=\"$tooltip\">$m</span>";
+	"<span class=\"marker\">$m</span>"
 }
 
 sub cross_links {

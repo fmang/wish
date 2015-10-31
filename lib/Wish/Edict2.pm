@@ -2,6 +2,7 @@ package Wish::Edict2;
 
 use strict;
 use warnings;
+use utf8;
 
 use DB_File;
 use DBM_Filter;
@@ -163,7 +164,7 @@ sub search {
 	my ($self, $q) = @_;
 	my $ks = kanji_count($q);
 	my @results;
-	if ($ks == 0 and $q =~ /^[\p{Hira}\p{Kana}]+$/) {
+	if ($ks == 0 and $q =~ /^[\p{Hira}\p{Kana}ー]+$/) {
 		@results = $self->reading_lookup($q);
 		push(@results, sort { main($a) cmp main($b) } $self->prefix_lookup($q));
 		# the two result sets shouldn't intersect

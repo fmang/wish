@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 19;
+use Test::More tests => 20;
 
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
@@ -30,6 +30,7 @@ is($dic->search('みどり'), 1, 'Exact reading');
 is($dic->search('あいき'), 1, 'Complicated reading');
 is($dic->search('ミドリ'), 1, 'Katakana reading');
 is($dic->search('い'), 0, 'Inexact kana search');
+is($dic->search('スルー'), 1, 'Dash katakana');
 
 # Kana expressions
 is($dic->search('アア'), 1, 'Kana prefix');

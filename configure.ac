@@ -10,8 +10,8 @@ if test "x$PERL" = x; then
   AC_MSG_ERROR([Perl not found; check your \$PATH.])
 fi
 
-AC_CHECK_PROG([sass], [sass], [yes], [no])
-AM_CONDITIONAL([FOUND_SASS], [test "x$sass" = xyes])
+AC_CHECK_PROGS([SASS], [sass sassc], [])
+AM_CONDITIONAL([FOUND_SASS], [test "x$SASS" != x])
 AM_COND_IF([FOUND_SASS],, [AC_MSG_WARN([sass not found; CSS stylesheets won't be generated.])])
 
 AC_CHECK_PROG([pod2man], [pod2man], [yes], [no])

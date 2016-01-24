@@ -38,7 +38,7 @@ wish.fcgi.8: bin/wish.fcgi
 	pod2man --section 8 $< > $@
 
 %.css: %.scss
-	sass $< $@
+	$(SASS) $< $@
 
 CPAN_FILES = MANIFEST Build.PL
 EXTRA_DIST = autogen.sh bin/wdic bin/wish.fcgi t $(CPAN_FILES)

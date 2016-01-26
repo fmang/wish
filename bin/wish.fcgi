@@ -330,11 +330,11 @@ sub word_entry {
 }
 
 sub readings {
-	my ($k, $field, $title) = @_;
+	my ($k, $field, $title, $tip) = @_;
 	$k->{$field} && @{$k->{$field}} or return;
 	print
 	"<tr class=\"$field\">\n"
-	. "<td><b>$title</b></td>\n"
+	. "<td><b title=\"$tip\">$title</b></td>\n"
 	. '<td>' . join(', ', map {
 		$_ = escape($_);
 		$field eq 'kun' and s{\.(.*)$}{<span class="okurigana">&middot;$1</span>};
@@ -349,10 +349,10 @@ sub kanji_entry {
 	print '<div class="heading">' . escape($k->{kanji}) . "</div>\n";
 
 	print "<table class=\"readings\">\n";
-	readings($k, on => '&#x97F3;');
-	readings($k, kun => '&#x8A13;');
-	readings($k, nanori => '&#x540D;');
-	readings($k, english => '&#x82F1;'); # well, not really readings but eh
+	readings($k, on => '&#x97F3;', 'On-yomi readings');
+	readings($k, kun => '&#x8A13;', 'Kun-yomi readings');
+	readings($k, nanori => '&#x540D;', 'Nanori readings');
+	readings($k, english => '&#x82F1;', 'English meanings'); # well, not really readings but eh
 	print "</table>\n";
 
 	print "</div>\n"; # .kanji

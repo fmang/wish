@@ -20,7 +20,8 @@ staticdir = $(pkgdatadir)/static
 static_DATA = $(STYLESHEETS)
 dist_static_DATA = \
 	static/_flexbox.scss \
-	static/wish.scss
+	static/wish.scss \
+	static/wanakana.min.js
 
 edit = sed -e "s/VERSION = '[^']*'/VERSION = '$(VERSION)'/" \
            -e "2 a use lib '$(pmdir)';\n" \
@@ -42,5 +43,5 @@ wish.fcgi.8: bin/wish.fcgi
 	$(SASS) $< $@
 
 CPAN_FILES = MANIFEST Build.PL
-EXTRA_DIST = autogen.sh bin/wdic bin/wish.fcgi t $(CPAN_FILES) LICENSE
+EXTRA_DIST = autogen.sh bin/wdic bin/wish.fcgi t $(CPAN_FILES) LICENSE static/LICENSE.wanakana
 CLEANFILES = wdic wdic.1 wish.fcgi wish.fcgi.8 static/wish.css

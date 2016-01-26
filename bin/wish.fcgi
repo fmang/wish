@@ -412,10 +412,11 @@ sub page_header {
 		<meta name="robots" content="noindex, nofollow" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" type="text/css" href="static/wish.css" />
+		<script src="static/wanakana.min.js"></script>
 	</head>
-	<body>
+	<body onload="wanakana.bind(document.getElementById('ime'));">
 		<form id="header">
-			<input type="text" name="q" placeholder="Search&#8230;" />
+			<input id="ime" type="text" name="q" placeholder="Search&#8230;" />
 			<input type="submit" value="&#x691C;&#x7D22;" />
 		</form>
 		<div id="main">

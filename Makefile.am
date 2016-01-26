@@ -23,7 +23,8 @@ dist_static_DATA = \
 	static/wish.scss
 
 edit = sed -e "s/VERSION = '[^']*'/VERSION = '$(VERSION)'/" \
-           -e "2 a use lib '$(pmdir)';\n"
+           -e "2 a use lib '$(pmdir)';\n" \
+	   -e "/shared_db = undef/ s|undef|'$(pkgdatadir)/db'|"
 
 wdic: bin/wdic Makefile
 	$(edit) < $< > $@

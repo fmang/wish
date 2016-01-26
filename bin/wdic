@@ -80,6 +80,10 @@ Specify the location of the database directory.
 
 By default, F<~/.wish> is used.
 
+In the case a system default database was set up, usually in
+F</usr/share/wish/db>, that one would be used as a fallback instead of creating
+a new database in the user's home directory.
+
 =item B<-l>, B<--load>
 
 Open the database in write mode.
@@ -165,7 +169,7 @@ Options:
   -h, --help            Show this help.
 EOF
 
-my $dbdir = $ENV{HOME} ? catdir($ENV{HOME}, '.wish') : 'db';
+my $dbdir;
 my $load_mode;
 my @kanjidic_files;
 my @edict_files;
@@ -199,6 +203,18 @@ if (!$load_mode and @kanjidic_files || @edict_files) {
 
 if ($load_mode and @ARGV) {
 	die("Please don't load and search at the same time.\n");
+}
+
+if (!$dbdir) {
+	my $home = catdir($ENV{HOME} || '.', '.wish');
+	my $shared_db = undef; # fill with autoconf & al.
+	if (-d $home) {
+		$dbdir = $home;
+	} elsif ($shared_db && -d $shared_db) {
+		$dbdir = $shared_db;
+	} else {
+		$dbdir = $home;
+	}
 }
 
 if ($load_mode && ! -d $dbdir) {

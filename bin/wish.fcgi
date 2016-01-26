@@ -72,6 +72,10 @@ Specify the location of the database directory.
 
 By default, F<~/.wish> is used.
 
+In the case a system default database was set up, usually in
+F</usr/share/wish/db>, that one would be used as a fallback instead of creating
+a new database in the user's home directory.
+
 =item B<-h>, B<--help>
 
 Display a brief help.
@@ -110,7 +114,7 @@ Options:
   -h, --help            Show this help.
 EOF
 
-my $dbdir = $ENV{HOME} ? catdir($ENV{HOME}, '.wish') : 'db';
+my $dbdir;
 my $show_help;
 
 GetOptions(
@@ -121,6 +125,19 @@ GetOptions(
 if ($show_help) {
 	print($help);
 	exit(0);
+}
+
+if (!$dbdir) {
+	my $home = catdir($ENV{HOME} || '.', '.wish');
+	my $shared_db = undef; # fill with autoconf & al.
+	if (-d $home) {
+		$dbdir = $home;
+	} elsif ($shared_db && -d $shared_db) {
+		$dbdir = $shared_db;
+	} else {
+		$dbdir = $home;
+	}
+	# I'm sorry I copied this from wdic.
 }
 
 my $kanjidic = Wish::KanjiDic->new($dbdir);

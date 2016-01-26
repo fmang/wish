@@ -42,5 +42,5 @@ wish.fcgi.8: bin/wish.fcgi
 	$(SASS) $< $@
 
 CPAN_FILES = MANIFEST Build.PL
-EXTRA_DIST = autogen.sh bin/wdic bin/wish.fcgi t $(CPAN_FILES)
+EXTRA_DIST = autogen.sh bin/wdic bin/wish.fcgi t $(CPAN_FILES) LICENSE
 CLEANFILES = wdic wdic.1 wish.fcgi wish.fcgi.8 static/wish.css

@@ -163,8 +163,15 @@ $column-width: 300px;
 		}
 	}
 	@media screen and (max-width: 1.4 * $column-width) {
+		.kanjis, .kanjis .kanji {
+			@include css3-prefix(display, block);
+		}
 		.kanjis .kanji {
 			width: auto;
+			.heading {
+				float: left;
+				margin: 0 5px 0 0;
+			}
 		}
 	}
 	@include entry-columns(2);

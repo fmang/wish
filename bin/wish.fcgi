@@ -431,6 +431,7 @@ sub page_footer {
 			<ul>
 				<li><a href="http://www.csse.monash.edu.au/~jwb/kanjidic.html" title="Free kanji dictionary">KANJIDIC</a></li>
 				<li><a href="http://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a></li>
+				<li><a href="http://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a></li>
 				<li><a href="http://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Colors</a></li>
 				<li><a href="http://www.perl.org/" title="Cool programming language">Perl</a></li>
 			</ul>

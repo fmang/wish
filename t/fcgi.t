@@ -1,6 +1,7 @@
 use utf8;
 use Test::More tests => 4;
 
+use Encode qw(decode_utf8);
 use File::Spec::Functions;
 use File::Temp qw(tempdir);
 use URI::Escape;
@@ -21,7 +22,7 @@ sub get {
 	local $ENV{REQUEST_METHOD} = 'GET';
 	local $ENV{REQUEST_URI} = uri_escape_utf8($path) . "?$query";
 	local $ENV{QUERY_STRING} = $query;
-	`$fcgi`
+	decode_utf8(`$fcgi`)
 }
 
 like(get('/fhiufh'), qr/404/, '404 Not Found');

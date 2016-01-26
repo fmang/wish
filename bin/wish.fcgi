@@ -95,7 +95,7 @@ use utf8;
 use CGI qw(:standard);
 use CGI::Carp;
 use CGI::Fast;
-use Encode qw(decode);
+use Encode qw(encode_utf8 decode_utf8);
 use File::Spec::Functions qw(catdir);
 use Getopt::Long qw(:config no_auto_abbrev);
 use Wish::Edict2;
@@ -259,6 +259,10 @@ my %markers = (
 	'P' => 'Common',
 );
 
+sub escape {
+	return encode_utf8(escapeHTML(@_));
+}
+
 sub html_list {
 	my $class = shift;
 	@_ == 0 and $class .= ' empty';
@@ -271,7 +275,7 @@ sub html_list {
 sub inline {
 	my $hl = shift;
 	join ', ' => map {
-		$_ = escapeHTML($_);
+		$_ = escape($_);
 		$hl and s{($hl)}{<b>$1</b>}g;
 		s{\(([^()]*)\)}{marker($1)}eg;
 		$_
@@ -315,7 +319,7 @@ sub word_entry {
 	}
 
 	$e->{meanings} and html_list('meanings', map {
-		$_ = escapeHTML($_);
+		$_ = escape($_);
 		s@([^ ])/([^ ])@$1 / $2@g;
 		s@([\({])([a-zA-Z\-]+)([\)}])@$1.marker($2).$3@eg;
 		s@\(See ([^\)]+)\)@'(See '.cross_links($1).')'@eg;
@@ -332,7 +336,7 @@ sub readings {
 	"<tr class=\"$field\">\n"
 	. "<td><b>$title</b></td>\n"
 	. '<td>' . join(', ', map {
-		$_ = escapeHTML($_);
+		$_ = escape($_);
 		$field eq 'kun' and s{\.(.*)$}{<span class="okurigana">&middot;$1</span>};
 		$_
 	} @{$k->{$field}}) . "</td>\n"
@@ -342,7 +346,7 @@ sub readings {
 sub kanji_entry {
 	my $k = shift;
 	print "<div class=\"kanji\">\n";
-	print '<div class="heading">' . escapeHTML($k->{kanji}) . "</div>\n";
+	print '<div class="heading">' . escape($k->{kanji}) . "</div>\n";
 
 	print "<table class=\"readings\">\n";
 	readings($k, on => '&#x97F3;');
@@ -356,11 +360,11 @@ sub kanji_entry {
 
 sub skip_block {
 	my ($q, $kanjis) = @_;
-	my $escaped_q = escapeHTML($q);
+	my $escaped_q = escape($q);
 	print "<h2>SKIP $escaped_q</h2>\n";
 	print "<div class=\"skip\">\n";
 	for (@$kanjis) {
-		my $k = escapeHTML($_);
+		my $k = escape($_);
 		print "<a href=\"?q=$k\">$k</a>\n";
 	}
 	print "</div>\n";
@@ -368,8 +372,8 @@ sub skip_block {
 
 sub results_block {
 	my ($q, $kanjis, $words, $homophones) = @_;
-	my $escaped_q = escapeHTML($q);
-	my $hl = escapeHTML(quotemeta($q));
+	my $escaped_q = escape($q);
+	my $hl = escape(quotemeta($q));
 
 	print "<h2>$escaped_q</h2>\n";
 	print "<div class=\"results\">\n";
@@ -398,7 +402,7 @@ sub results_block {
 
 sub page_header {
 	my $title = shift;
-	$title = $title ? escapeHTML($title) . ' - Wish' : 'Wish';
+	$title = $title ? escape($title) . ' - Wish' : 'Wish';
 	print <<"EOF";
 <!doctype html>
 <html>
@@ -438,7 +442,7 @@ EOF
 sub search_page {
 	print header(-type => 'text/html', -charset => 'utf-8');
 	my $q_arg = param('q');
-	my @qs = $q_arg ? split(/[ ,;]+/, decode('utf8', $q_arg)) : ();
+	my @qs = $q_arg ? split(/[ ,;]+/, decode_utf8($q_arg)) : ();
 	page_header(join(', ', @qs));
 	for my $q (@qs) {
 		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {

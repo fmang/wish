@@ -1,4 +1,4 @@
-AC_INIT([wish], [1.2], [fmang+perl@mg0.fr])
+AC_INIT([wish], [1.3], [fmang+perl@mg0.fr])
 AC_PREREQ([2.61])
 AM_INIT_AUTOMAKE([foreign])
 

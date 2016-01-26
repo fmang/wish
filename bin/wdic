@@ -145,7 +145,7 @@ use Wish::Edict2;
 use Wish::KanjiDic;
 use Wish::Unicode qw(kanjis);
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 
 my $usage = <<EOF;
 Usage: wdic [OPTIONS] [QUERY...]

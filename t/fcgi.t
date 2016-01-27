@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use Encode qw(decode_utf8);
 use File::Spec::Functions;
@@ -30,3 +30,4 @@ like(get('/fhiufh'), qr/404/, '404 Not Found');
 like(get('/search', q => '翠'), qr/green/, 'Word search');
 like(get('/search', q => '愛'), qr/affection/, 'Kanji search');
 like(get('/search', q => '2-4-9'), qr/(愛|&#x611B;)/, 'SKIP search');
+like(get('/search', q => '2ー4ー9'), qr/(愛|&#x611B;)/, 'SKIP search with katakana dash');

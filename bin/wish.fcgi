@@ -447,7 +447,8 @@ sub search_page {
 	my @qs = $q_arg ? split(/[ ,;]+/, decode_utf8($q_arg)) : ();
 	page_header(join(', ', @qs));
 	for my $q (@qs) {
-		if ($q =~ /^[1-4]-[0-9]*-[0-9]*$/) {
+		if ($q =~ /^[1-4](-|ー)[0-9]*(-|ー)[0-9]*$/) {
+			$q =~ s/ー/-/g;
 			my @r = $kanjidic->skip_lookup($q);
 			@r = sort(@r);
 			skip_block($q, \@r);

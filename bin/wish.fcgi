@@ -409,13 +409,13 @@ sub page_header {
 	<head>
 		<title>$title</title>
 		<meta charset="utf-8" />
-		<meta name="robots" content="noindex, nofollow" />
+		<meta name="keywords" content="japanese,english,dictionary,edict,kanjidic,kanji,wish" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" type="text/css" href="static/wish.css" />
-		<script src="static/wanakana.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/wish.css" />
+		<script src="/static/wanakana.min.js"></script>
 	</head>
 	<body onload="wanakana.bind(document.getElementById('ime'));">
-		<form id="header">
+		<form id="header" action="/search">
 			<input id="ime" type="text" name="q" placeholder="Search&#8230;" />
 			<input type="submit" value="&#x691C;&#x7D22;" />
 		</form>
@@ -463,10 +463,51 @@ sub search_page {
 	page_footer();
 }
 
+sub home_page {
+	print header(-type => 'text/html', -charset => 'utf-8');
+	page_header();
+	print <<EOF;
+<h2>Welcome!</h2>
+<p>Welcome to <i>Wish</i>, a homemade Japanese-to-English dictionary browsing tool.<p>
+<p>Here's what you should know about it:
+<ul>
+	<li><b>Wish focuses on kanji search.</b> The order in which you write
+	them or the kanas you place in-between won't affect the search results
+	much, though it orders them by relevancy. Sadly, you'll probably need
+	an <a href="https://en.wikipedia.org/wiki/Input_method_editor">IME</a>
+	to use that feature.</li>
+	<li><b>It shows homophones,</b> so that you may see dangerous
+	ambiguities.</li>
+	<li><b>Dumb kana searches.</b> It will show you the words that sound
+	like what you searched for.</li>
+	<li><b>No grammar features though.</b> You'd better either use kanji
+	search, or use non-inflected forms.</li>
+	<li><b>SKIP patterns are supported.</b> If you don't know what these
+	are, check <a href="http://nihongo.monash.edu/SKIP.html">this</a>.</li>
+</ul>
+</p>
+<p>Wish is free software. You may run clones or use the command-line interface
+without requiring an Internet connection. The source code is available on
+<a href="https://github.com/fmang/wish/">GitHub</a>.</p>
+<h2>Credits</h2>
+<p>
+Wish is built on top of various other projects, all of which deserving credit.
+<ul>
+	<li><a href="http://www.csse.monash.edu.au/~jwb/kanjidic.html" title="Free kanji dictionary">KANJIDIC</a> and <a href="http://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a>, which are free, pretty exhaustive, and high-quality dictionaries.</li>
+	<li><a href="http://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a> is the lightweight JavaScript IME we use for the search bar.</li>
+	<li><a href="http://www.perl.org/" title="Cool programming language">Perl5</a> is a mature programming language, and is delightful.</li>
+	<li><a href="http://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Partnership</a> is the color scheme on which Wish's web interface is based.</li>
+</ul>
+</p>
+<p>— Wish team</p>
+EOF
+	page_footer();
+}
+
 while (new CGI::Fast) {
 	my $url = url(-absolute => 1);
 	if ($url eq '/') {
-		print redirect('/search');
+		home_page();
 	} elsif ($url eq '/search') {
 		search_page();
 	} else {

@@ -98,6 +98,7 @@ use CGI::Fast;
 use Encode qw(encode_utf8 decode_utf8);
 use File::Spec::Functions qw(catdir);
 use Getopt::Long qw(:config no_auto_abbrev);
+use JSON::XS;
 use Wish::Edict2;
 use Wish::KanjiDic;
 use Wish::Unicode qw(kanjis);
@@ -399,6 +400,16 @@ sub results_block {
 }
 
 ################################################################################
+# JSON API
+
+sub exact_search_api {
+	print header(-type => 'application/json', -charset => 'utf-8');
+	my $q = decode_utf8(param('q'));
+	my @words = $q ? $edict->lookup($q) : ();
+	print encode_json(\@words);
+}
+
+################################################################################
 
 sub page_header {
 	my $title = shift;
@@ -510,6 +521,8 @@ while (new CGI::Fast) {
 		home_page();
 	} elsif ($url eq '/search') {
 		search_page();
+	} elsif ($url eq '/api/exact') {
+		exact_search_api();
 	} else {
 		print header('text/plain', '404 Not Found');
 		print "404 Not Found\n";

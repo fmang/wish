@@ -1,5 +1,5 @@
 use utf8;
-use Test::More tests => 5;
+use Test::More tests => 8;
 
 use Encode qw(decode_utf8);
 use File::Spec::Functions;
@@ -31,3 +31,7 @@ like(get('/search', q => '翠'), qr/green/, 'Word search');
 like(get('/search', q => '愛'), qr/affection/, 'Kanji search');
 like(get('/search', q => '2-4-9'), qr/(愛|&#x611B;)/, 'SKIP search');
 like(get('/search', q => '2ー4ー9'), qr/(愛|&#x611B;)/, 'SKIP search with katakana dash');
+
+is(get('/api/exact'), "Content-Type: application/json; charset=utf-8\r\n\r\n[]", 'exact search with missing query');
+is(get('/api/exact', q => '居'), "Content-Type: application/json; charset=utf-8\r\n\r\n[]", 'exact search without matches');
+like(get('/api/exact', q => '居る'), qr/to stay/, 'exact search with match');

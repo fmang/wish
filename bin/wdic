@@ -174,7 +174,7 @@ my $load_mode;
 my @kanjidic_files;
 my @edict_files;
 my $show_homophones = 1;
-my $show_kanji = 0;
+my $show_kanji = 1;
 my $use_colors = -t STDOUT;
 my $pager = $ENV{PAGER};
 my $use_pager = -t STDOUT;

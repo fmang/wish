@@ -23,14 +23,14 @@ Before Wish can be used, the word database needs to be built using KANJIDIC and
 EDICT2 files.
 
 These dictionaries can be found at
-L<http://www.csse.monash.edu.au/~jwb/kanjidic.html>
-and L<http://www.edrdg.org/jmdict/edict.html>.
+L<https://www.edrdg.org/wiki/index.php/KANJIDIC_Project>
+and L<https://www.edrdg.org/jmdict/edict.html>.
 
 You can download and load them like this:
 
-    wget http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz
+    wget http://ftp.edrdg.org/pub/Nihongo/kanjidic.gz
     gunzip kanjidic.gz
-    wget http://ftp.monash.edu.au/pub/nihongo/edict2.gz
+    wget http://ftp.edrdg.org/pub/Nihongo/edict2.gz
     gunzip edict2.gz
 
     # Build the database, takes a little while

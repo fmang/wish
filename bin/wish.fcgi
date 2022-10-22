@@ -440,11 +440,11 @@ sub page_footer {
 		<div id="footer">
 			<div><a href="https://github.com/fmang/wish/" title="This project">Wish</a></div>
 			<ul>
-				<li><a href="http://www.csse.monash.edu.au/~jwb/kanjidic.html" title="Free kanji dictionary">KANJIDIC</a></li>
-				<li><a href="http://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a></li>
-				<li><a href="http://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a></li>
-				<li><a href="http://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Colors</a></li>
-				<li><a href="http://www.perl.org/" title="Cool programming language">Perl</a></li>
+				<li><a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project" title="Free kanji dictionary">KANJIDIC</a></li>
+				<li><a href="https://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a></li>
+				<li><a href="https://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a></li>
+				<li><a href="https://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Colors</a></li>
+				<li><a href="https://www.perl.org/" title="Cool programming language">Perl</a></li>
 			</ul>
 		</div>
 	</body>
@@ -504,10 +504,10 @@ without requiring an Internet connection. The source code is available on
 <p>
 Wish is built on top of various other projects, all of which deserving credit.
 <ul>
-	<li><a href="http://www.csse.monash.edu.au/~jwb/kanjidic.html" title="Free kanji dictionary">KANJIDIC</a> and <a href="http://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a>, which are free, pretty exhaustive, and high-quality dictionaries.</li>
-	<li><a href="http://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a> is the lightweight JavaScript IME we use for the search bar.</li>
-	<li><a href="http://www.perl.org/" title="Cool programming language">Perl5</a> is a mature programming language, and is delightful.</li>
-	<li><a href="http://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Partnership</a> is the color scheme on which Wish's web interface is based.</li>
+	<li><a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project" title="Free kanji dictionary">KANJIDIC</a> and <a href="https://www.edrdg.org/jmdict/edict.html" title="Free word dictionary">EDICT2</a>, which are free, pretty exhaustive, and high-quality dictionaries.</li>
+	<li><a href="https://wanakana.com/" title="Amazing JavaScript IME">WanaKana</a> is the lightweight JavaScript IME we use for the search bar.</li>
+	<li><a href="https://www.perl.org/" title="Cool programming language">Perl5</a> is a mature programming language, and is delightful.</li>
+	<li><a href="https://www.colourlovers.com/palette/2085059/Partnership" title="Partnership by cantc">Partnership</a> is the color scheme on which Wish's web interface is based.</li>
 </ul>
 </p>
 <p>— Wish team</p>
